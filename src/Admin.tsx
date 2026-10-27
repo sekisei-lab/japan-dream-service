@@ -514,6 +514,11 @@ export default function AdminPage() {
               </div>
             </div>
             <div className="text-xs leading-6 text-[#173E38]/60">※ 電話・メール・微信/LINEは、各ホテルの客房预览ページの「咨询方式栏」にも表示されます。空欄にした項目は、コンタクトページでは非表示になります。</div>
+            <div className="flex justify-end">
+              <button onClick={save} disabled={saving || (!dirty && !contactDirty)} className="rounded-xl bg-[#173E38] px-6 py-2 text-sm text-white hover:bg-[#143A35] disabled:opacity-40">
+                {saving ? '保存中…' : '保存して公開'}
+              </button>
+            </div>
           </div>
         </div>
       )}
