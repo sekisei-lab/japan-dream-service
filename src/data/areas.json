@@ -1,0 +1,57 @@
+[
+  {
+    "key": "Osaka",
+    "label": "大阪市内",
+    "desc": "大阪市内・関西の拠点エリア"
+  },
+  {
+    "key": "Kobe",
+    "label": "神戸",
+    "desc": "神戸エリア"
+  },
+  {
+    "key": "Kyoto",
+    "label": "京都",
+    "desc": "京都エリア"
+  },
+  {
+    "key": "Kansai",
+    "label": "関空",
+    "desc": "関西空港周辺"
+  },
+  {
+    "key": "Chubu",
+    "label": "中部",
+    "desc": "中部エリア"
+  },
+  {
+    "key": "Fuji",
+    "label": "富士山",
+    "desc": "富士山周辺"
+  },
+  {
+    "key": "Yokohama",
+    "label": "横浜",
+    "desc": "横浜エリア"
+  },
+  {
+    "key": "Chiba",
+    "label": "千葉",
+    "desc": "千葉エリア"
+  },
+  {
+    "key": "Tokyo",
+    "label": "東京",
+    "desc": "東京エリア"
+  },
+  {
+    "key": "Narita",
+    "label": "成田",
+    "desc": "成田空港周辺"
+  },
+  {
+    "key": "Hiroshima",
+    "label": "広島",
+    "desc": "広島エリア"
+  }
+]

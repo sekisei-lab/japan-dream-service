@@ -17,8 +17,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import hotelDataJson from '@/data/hotelData.json';
 import montereyRoomsJson from '@/data/montereyRooms.json';
+import areasJson from '@/data/areas.json';
 
-type CityKey = 'All' | 'Osaka' | 'Kyoto' | 'Tokyo';
+type CityKey = string;
 type PageKey =
   | 'Home'
   | 'Service'
@@ -26,14 +27,12 @@ type PageKey =
   | 'ServiceHotel'
   | 'ServiceGroup'
   | 'Hotels'
-  | 'Osaka'
-  | 'Kyoto'
-  | 'Tokyo'
+  | `Area:${string}`
   | 'Contact'
   | 'MontereyBooking';
 
 type HotelRecord = {
-  city: Exclude<CityKey, 'All'>;
+  city: string;
   cityLabel: string;
   name: string;
   en: string;
@@ -43,6 +42,8 @@ type HotelRecord = {
   tax: string;
   note: string;
   address: string;
+  phone?: string;
+  url?: string;
   image: string;
 };
 
@@ -74,27 +75,21 @@ const hotelData = hotelDataJson as HotelRecord[];
 
 const montereyRooms = montereyRoomsJson as RoomPlan[];
 
-const cityMeta: Record<CityKey, { label: string; desc: string; accent: string }> = {
+const accents = [
+  'linear-gradient(135deg, #3A665D 0%, #1D4B44 100%)',
+  'linear-gradient(135deg, #4C6A58 0%, #24463D 100%)',
+  'linear-gradient(135deg, #2B6E69 0%, #194A47 100%)',
+];
+
+const areas = areasJson as { key: string; label: string; desc: string }[];
+
+const cityMeta: Record<string, { label: string; desc: string; accent: string }> = {
   All: {
     label: '全部',
     desc: '整合旅行社资源与现有酒店信息，做成统一预览入口。',
     accent: 'linear-gradient(135deg, #274E48 0%, #143A35 100%)',
   },
-  Osaka: {
-    label: '大阪',
-    desc: '城市住宿、关西入口、团队行程衔接。',
-    accent: 'linear-gradient(135deg, #3A665D 0%, #1D4B44 100%)',
-  },
-  Kyoto: {
-    label: '京都',
-    desc: '和风住宿、文化观光、路线感最强。',
-    accent: 'linear-gradient(135deg, #4C6A58 0%, #24463D 100%)',
-  },
-  Tokyo: {
-    label: '東京',
-    desc: '都会观光、商务出行、交通选择丰富。',
-    accent: 'linear-gradient(135deg, #2B6E69 0%, #194A47 100%)',
-  },
+  ...Object.fromEntries(areas.map((a, i) => [a.key, { label: a.label, desc: a.desc, accent: accents[i % accents.length] }])),
 };
 
 function runDataSanityChecks() {
@@ -161,23 +156,24 @@ function HotelsGrid({ hotels, onOpenMonterey }: { hotels: HotelRecord[]; onOpenM
                   <Stars count={hotel.stars} />
                 </div>
                 <div className="mt-4 grid gap-2 text-sm text-[#173E38]/72">
-                  <div>房型 / 面积：{hotel.size}</div>
+                  {hotel.size && <div>房型 / 面积：{hotel.size}</div>}
                   <div>价格：{hotel.price}</div>
-                  <div>税费：{hotel.tax}</div>
-                  <div>{hotel.note}</div>
+                  {hotel.tax && <div>税费：{hotel.tax}</div>}
+                  {hotel.note && <div>{hotel.note}</div>}
                 </div>
                 <div className="mt-4 flex items-start gap-2 text-sm leading-6 text-[#173E38]/62">
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
                   <span>{hotel.address}</span>
                 </div>
+                {hotel.phone && <div className="mt-1 text-sm text-[#173E38]/62">TEL: {hotel.phone}</div>}
                 <Button
                   variant={isMonterey ? 'default' : 'outline'}
-                  onClick={isMonterey ? onOpenMonterey : undefined}
+                  onClick={isMonterey ? onOpenMonterey : hotel.url ? () => window.open(hotel.url, '_blank', 'noopener') : undefined}
                   className={`mt-5 w-full rounded-2xl ${
                     isMonterey ? 'bg-[#173E38] text-white hover:bg-[#143A35]' : 'border-[#173E38]/12 bg-transparent text-[#173E38] hover:bg-[#F7F3E8]'
                   }`}
                 >
-                  {isMonterey ? '客房预约画面' : '查看详情'} <ArrowRight className="ml-2 h-4 w-4" />
+                  {isMonterey ? '客房预约画面' : hotel.url ? '公式サイト' : '詳細は準備中'} <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </CardContent>
             </Card>
@@ -215,7 +211,7 @@ function ServicePage({ title }: { title?: string }) {
   );
 }
 
-function CityPage({ city, hotels, onOpenMonterey }: { city: Exclude<CityKey, 'All'>; hotels: HotelRecord[]; onOpenMonterey: () => void }) {
+function CityPage({ city, hotels, onOpenMonterey }: { city: string; hotels: HotelRecord[]; onOpenMonterey: () => void }) {
   const meta = cityMeta[city];
   return (
     <div className="px-6 py-14 md:px-10">
@@ -228,7 +224,7 @@ function CityPage({ city, hotels, onOpenMonterey }: { city: Exclude<CityKey, 'Al
         <div className="mt-10">
           <div className="mb-6 flex items-center justify-between gap-4">
             <div>
-              <div className="text-xs uppercase tracking-[0.22em] text-[#173E38]/45">Hotels in {city}</div>
+              <div className="text-xs uppercase tracking-[0.22em] text-[#173E38]/45">Hotels in {meta.label}</div>
               <h3 className="mt-2 text-3xl font-semibold text-[#173E38]">{meta.label} 酒店列表</h3>
             </div>
             <div className="rounded-2xl bg-white px-4 py-3 text-sm text-[#173E38] ring-1 ring-[#173E38]/10">共 {hotels.length} 家</div>
@@ -523,9 +519,9 @@ function HomeOrHotelsPage({
             </div>
           </div>
           <div className="mt-8 flex flex-wrap gap-2">
-            {(['All', 'Osaka', 'Kyoto', 'Tokyo'] as const).map((city) => (
+            {['All', ...areas.map((a) => a.key)].map((city) => (
               <button key={city} onClick={() => setActiveCity(city)} className={`rounded-2xl px-4 py-3 text-sm transition ${activeCity === city ? 'bg-[#173E38] text-white shadow' : 'bg-white text-[#173E38]/72 ring-1 ring-[#173E38]/10 hover:bg-[#F7F3E8]'}`}>
-                {city === 'All' ? '全部' : city}
+                {cityMeta[city].label}
               </button>
             ))}
           </div>
@@ -564,9 +560,6 @@ export default function JapanDreamServicePrototype() {
     });
   }, [activeCity, query]);
 
-  const osakaHotels = hotelData.filter((hotel) => hotel.city === 'Osaka');
-  const kyotoHotels = hotelData.filter((hotel) => hotel.city === 'Kyoto');
-  const tokyoHotels = hotelData.filter((hotel) => hotel.city === 'Tokyo');
   const heroText = cityMeta[activeCity];
 
   const goPage = (page: PageKey) => {
@@ -579,6 +572,10 @@ export default function JapanDreamServicePrototype() {
   };
 
   const renderPage = () => {
+    if (activePage.startsWith('Area:')) {
+      const key = activePage.slice(5);
+      return <CityPage city={key} hotels={hotelData.filter((hotel) => hotel.city === key)} onOpenMonterey={() => goPage('MontereyBooking')} />;
+    }
     switch (activePage) {
       case 'Service':
         return <ServicePage title="Service Overview" />;
@@ -588,12 +585,6 @@ export default function JapanDreamServicePrototype() {
         return <ServicePage title="Hotel Arrangement" />;
       case 'ServiceGroup':
         return <ServicePage title="Group Support" />;
-      case 'Osaka':
-        return <CityPage city="Osaka" hotels={osakaHotels} onOpenMonterey={() => goPage('MontereyBooking')} />;
-      case 'Kyoto':
-        return <CityPage city="Kyoto" hotels={kyotoHotels} onOpenMonterey={() => goPage('MontereyBooking')} />;
-      case 'Tokyo':
-        return <CityPage city="Tokyo" hotels={tokyoHotels} onOpenMonterey={() => goPage('MontereyBooking')} />;
       case 'Contact':
         return <ContactPage />;
       case 'MontereyBooking':
@@ -707,10 +698,10 @@ export default function JapanDreamServicePrototype() {
                     <button onClick={goHotelsPreview} className={`flex items-center gap-1 rounded-2xl px-4 py-2 text-sm transition ${activePage === 'Hotels' ? 'bg-[#173E38] text-white shadow' : 'text-[#173E38]/72 hover:bg-white hover:text-[#173E38]'}`}>
                       Hotels <ChevronDown className="h-4 w-4" />
                     </button>
-                    <div className="invisible absolute left-0 top-12 z-20 w-56 rounded-2xl border border-[#173E38]/10 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:opacity-100">
-                      <button onClick={() => goPage('Osaka')} className="w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-[#F7F3E8]">Osaka</button>
-                      <button onClick={() => goPage('Kyoto')} className="w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-[#F7F3E8]">Kyoto</button>
-                      <button onClick={() => goPage('Tokyo')} className="w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-[#F7F3E8]">Tokyo</button>
+                    <div className="invisible absolute left-0 top-12 z-20 max-h-[70vh] w-56 overflow-y-auto rounded-2xl border border-[#173E38]/10 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:opacity-100">
+                      {areas.map((a) => (
+                        <button key={a.key} onClick={() => goPage(`Area:${a.key}` as PageKey)} className="w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-[#F7F3E8]">{a.label}</button>
+                      ))}
                     </div>
                   </div>
                   <button onClick={() => goPage('Contact')} className={`rounded-2xl px-4 py-2 text-sm transition ${activePage === 'Contact' ? 'bg-[#173E38] text-white shadow' : 'text-[#173E38]/72 hover:bg-white hover:text-[#173E38]'}`}>
