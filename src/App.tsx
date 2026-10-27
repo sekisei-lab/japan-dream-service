@@ -1,0 +1,865 @@
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  ArrowDown,
+  ArrowRight,
+  CalendarDays,
+  ChevronDown,
+  ChevronRight,
+  MapPin,
+  Search,
+  Sparkles,
+  Star,
+  Users,
+} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+
+type CityKey = 'All' | 'Osaka' | 'Kyoto' | 'Tokyo';
+type PageKey =
+  | 'Home'
+  | 'Service'
+  | 'ServiceTravel'
+  | 'ServiceHotel'
+  | 'ServiceGroup'
+  | 'Hotels'
+  | 'Osaka'
+  | 'Kyoto'
+  | 'Tokyo'
+  | 'Contact'
+  | 'MontereyBooking';
+
+type HotelRecord = {
+  city: Exclude<CityKey, 'All'>;
+  cityLabel: string;
+  name: string;
+  en: string;
+  stars: number;
+  size: string;
+  price: string;
+  tax: string;
+  note: string;
+  address: string;
+  image: string;
+};
+
+type RoomPlan = {
+  id: string;
+  roomType: string;
+  size: string;
+  occupancy: string;
+  image: string;
+  stock: number;
+  reserved: number;
+  prices: {
+    A: string;
+    B: string;
+    C: string;
+    D: string;
+  };
+  note: string;
+};
+
+const colors = {
+  bg: '#0E2E2A',
+  green2: '#2B766A',
+  gold: '#E7D8A8',
+  cream: '#F6F2E8',
+};
+
+const hotelData: HotelRecord[] = [
+  {
+    city: 'Osaka',
+    cityLabel: '大阪',
+    name: 'くれたけイン南海堺駅前',
+    en: 'KURETAKE INN NANKAI SAKAI STATION',
+    stars: 3,
+    size: '14㎡',
+    price: '6,500–7,000円',
+    tax: '宿泊税 200円',
+    note: '大浴場あり / 堺駅 徒歩2分',
+    address: '大阪府堺市堺区栄橋町1丁3-12',
+    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200',
+  },
+  {
+    city: 'Osaka',
+    cityLabel: '大阪',
+    name: 'ノク大阪',
+    en: 'NOKU OSAKA',
+    stars: 3,
+    size: '20㎡',
+    price: '8,500円〜',
+    tax: '宿泊税 200円',
+    note: '天満エリア / 価格帯が明確',
+    address: '大阪市北区天満2丁目10-13',
+    image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1200',
+  },
+  {
+    city: 'Osaka',
+    cityLabel: '大阪',
+    name: 'ホテル アゴーラ 大阪守口',
+    en: 'HOTEL AGORA OSAKA MORIGUCHI',
+    stars: 4,
+    size: '21㎡',
+    price: '7,500円〜 / 土曜 9,500円〜',
+    tax: '宿泊税 200円',
+    note: '守口エリア / 团队住宿可用',
+    address: '大阪府守口市河原町10-5',
+    image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1200',
+  },
+  {
+    city: 'Osaka',
+    cityLabel: '大阪',
+    name: 'ホテルモントレ ラ・スール大阪',
+    en: 'HOTEL MONTEREY LA SOEUR OSAKA',
+    stars: 4,
+    size: '16㎡ / 20㎡ / 22㎡ / 26㎡',
+    price: '10,500円〜 26,500円',
+    tax: '宿泊税別',
+    note: '京橋駅 徒歩約5分 / 温泉・朝食付きプランあり',
+    address: '大阪府大阪市中央区城見2丁目2-22',
+    image: 'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=1200',
+  },
+  {
+    city: 'Kyoto',
+    cityLabel: '京都',
+    name: 'hotel MONday 京都烏丸二条',
+    en: 'hotel MONday Kyoto Karasuma Nijo',
+    stars: 3,
+    size: '标准双床',
+    price: '8,000円〜',
+    tax: '按政策',
+    note: '烏丸通沿线 / 和现代设计',
+    address: '京都府京都市中京区烏丸通二条上る蒔絵屋町261-1',
+    image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1200',
+  },
+  {
+    city: 'Kyoto',
+    cityLabel: '京都',
+    name: '京乃宿 清水五条 呉竹荘',
+    en: 'Kyoto Inn Kiyomizu Gojo Kuretakeso',
+    stars: 3,
+    size: '15–18㎡',
+    price: '7,000円〜',
+    tax: '土曜祝日 +1,000円',
+    note: '清水五条 / 房型可灵活安排',
+    address: '京都府京都市東山区芳野町79-2',
+    image: 'https://images.unsplash.com/photo-1521783988139-89397d761dce?q=80&w=1200',
+  },
+  {
+    city: 'Tokyo',
+    cityLabel: '東京',
+    name: 'hotel MONday Premium TOYOSU',
+    en: 'hotel MONday Premium TOYOSU',
+    stars: 4,
+    size: '18㎡',
+    price: '中高端',
+    tax: '按政策',
+    note: '豊洲区域 / 团队与家庭皆适合',
+    address: '東京都江東区東雲1丁目2-11',
+    image: 'https://images.unsplash.com/photo-1551918120-9739cb430c6d?q=80&w=1200',
+  },
+  {
+    city: 'Tokyo',
+    cityLabel: '東京',
+    name: 'ベッセルイン浅草',
+    en: 'Vessel Inn Asakusa',
+    stars: 4,
+    size: '多房型',
+    price: '浅草观光区域',
+    tax: '按政策',
+    note: '观光适配度高',
+    address: '東京都台東区千束1丁目15-1',
+    image: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?q=80&w=1200',
+  },
+];
+
+const montereyRooms: RoomPlan[] = [
+  {
+    id: 'single',
+    roomType: 'シングル',
+    size: '16㎡',
+    occupancy: '1名',
+    image: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?q=80&w=1200',
+    stock: 8,
+    reserved: 3,
+    prices: { A: '16,500円', B: '20,000円', C: '22,500円', D: '26,500円' },
+    note: '温泉・朝食付きプランを想定',
+  },
+  {
+    id: 'hollywood-twin',
+    roomType: 'ハリウッドツイン',
+    size: '20㎡',
+    occupancy: '2名',
+    image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?q=80&w=1200',
+    stock: 12,
+    reserved: 5,
+    prices: { A: '10,500円', B: '12,500円', C: '14,500円', D: '18,500円' },
+    note: '京橋駅徒歩約5分、朝食付き',
+  },
+  {
+    id: 'twin',
+    roomType: 'ツイン',
+    size: '22㎡',
+    occupancy: '2名',
+    image: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?q=80&w=1200',
+    stock: 10,
+    reserved: 4,
+    prices: { A: '11,500円', B: '13,500円', C: '15,500円', D: '19,500円' },
+    note: 'スタンダードな予約画面サンプル',
+  },
+];
+
+const cityMeta: Record<CityKey, { label: string; desc: string; accent: string }> = {
+  All: {
+    label: '全部',
+    desc: '整合旅行社资源与现有酒店信息，做成统一预览入口。',
+    accent: 'linear-gradient(135deg, #274E48 0%, #143A35 100%)',
+  },
+  Osaka: {
+    label: '大阪',
+    desc: '城市住宿、关西入口、团队行程衔接。',
+    accent: 'linear-gradient(135deg, #3A665D 0%, #1D4B44 100%)',
+  },
+  Kyoto: {
+    label: '京都',
+    desc: '和风住宿、文化观光、路线感最强。',
+    accent: 'linear-gradient(135deg, #4C6A58 0%, #24463D 100%)',
+  },
+  Tokyo: {
+    label: '東京',
+    desc: '都会观光、商务出行、交通选择丰富。',
+    accent: 'linear-gradient(135deg, #2B6E69 0%, #194A47 100%)',
+  },
+};
+
+function runDataSanityChecks() {
+  console.assert(hotelData.length > 0, 'hotelData should not be empty');
+  console.assert(montereyRooms.length === 3, 'Monterey booking mock should include 3 room types');
+  console.assert(montereyRooms.every((room) => room.stock >= room.reserved), 'Stock should be >= reserved');
+  console.assert(hotelData.some((hotel) => hotel.en === 'HOTEL MONTEREY LA SOEUR OSAKA'), 'Monterey hotel should exist');
+  console.assert(hotelData.some((hotel) => hotel.city === 'Kyoto'), 'Kyoto hotel should exist');
+}
+runDataSanityChecks();
+
+function Stars({ count }: { count: number }) {
+  return (
+    <div className="flex items-center gap-1">
+      {Array.from({ length: count }).map((_, i) => (
+        <Star key={i} className="h-4 w-4 fill-current text-[#C7AC63]" />
+      ))}
+    </div>
+  );
+}
+
+function HotelPreviewVisual({ city, name, image }: { city: string; name: string; image: string }) {
+  return (
+    <div className="relative h-40 overflow-hidden rounded-[1.7rem] border border-white/30">
+      <img src={image} alt={name} className="h-full w-full object-cover" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+      <div className="absolute left-4 top-4 rounded-2xl bg-white/80 px-3 py-2 text-xs font-medium text-[#173E38] backdrop-blur-sm">
+        {city}
+      </div>
+      <div className="absolute bottom-4 left-4 right-4 rounded-[1.2rem] border border-white/40 bg-white/70 p-3 backdrop-blur-sm">
+        <div className="text-[11px] uppercase tracking-[0.18em] text-[#173E38]/60">Hotel Preview</div>
+        <div className="mt-1 line-clamp-2 text-sm font-semibold leading-5 text-[#173E38]">{name}</div>
+      </div>
+    </div>
+  );
+}
+
+function HotelsGrid({ hotels, onOpenMonterey }: { hotels: HotelRecord[]; onOpenMonterey: () => void }) {
+  return (
+    <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      {hotels.map((hotel, index) => {
+        const isMonterey = hotel.en === 'HOTEL MONTEREY LA SOEUR OSAKA';
+        return (
+          <motion.div
+            key={hotel.en}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.05, duration: 0.45 }}
+          >
+            <Card className="h-full overflow-hidden rounded-[2rem] border-[#173E38]/10 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+              <div className="p-4">
+                <HotelPreviewVisual city={hotel.city} name={hotel.name} image={hotel.image} />
+              </div>
+              <CardContent className="px-5 pb-5 pt-0">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="text-lg font-semibold leading-7 text-[#173E38]">{hotel.name}</div>
+                    <div className="mt-1 text-sm text-[#173E38]/54">{hotel.en}</div>
+                  </div>
+                  <div className="rounded-2xl bg-[#F7F3E8] px-3 py-2 text-xs font-medium text-[#173E38]">{hotel.cityLabel}</div>
+                </div>
+                <div className="mt-4">
+                  <Stars count={hotel.stars} />
+                </div>
+                <div className="mt-4 grid gap-2 text-sm text-[#173E38]/72">
+                  <div>房型 / 面积：{hotel.size}</div>
+                  <div>价格：{hotel.price}</div>
+                  <div>税费：{hotel.tax}</div>
+                  <div>{hotel.note}</div>
+                </div>
+                <div className="mt-4 flex items-start gap-2 text-sm leading-6 text-[#173E38]/62">
+                  <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
+                  <span>{hotel.address}</span>
+                </div>
+                <Button
+                  variant={isMonterey ? 'default' : 'outline'}
+                  onClick={isMonterey ? onOpenMonterey : undefined}
+                  className={`mt-5 w-full rounded-2xl ${
+                    isMonterey ? 'bg-[#173E38] text-white hover:bg-[#143A35]' : 'border-[#173E38]/12 bg-transparent text-[#173E38] hover:bg-[#F7F3E8]'
+                  }`}
+                >
+                  {isMonterey ? '客房预约画面' : '查看详情'} <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}
+
+function ServicePage({ title }: { title?: string }) {
+  const pageTitle = title ?? 'Service';
+  return (
+    <div className="px-6 py-14 md:px-10">
+      <div className="mx-auto max-w-7xl">
+        <div className="rounded-[2.2rem] bg-[linear-gradient(135deg,#3A665D_0%,#1D4B44_100%)] p-8 text-white shadow-2xl">
+          <div className="text-xs uppercase tracking-[0.22em] text-white/58">Service Page</div>
+          <h2 className="mt-3 text-4xl font-semibold">{pageTitle}</h2>
+          <p className="mt-4 max-w-2xl text-sm leading-8 text-white/82 md:text-base">
+            这里是 {pageTitle} 的独立页面。可以继续扩展真实服务介绍、流程与咨询入口。
+          </p>
+        </div>
+        <div className="mt-10 grid gap-5 md:grid-cols-3">
+          {['Travel Planning', 'Hotel Arrangement', 'Group Support'].map((item) => (
+            <Card key={item} className="rounded-[1.8rem] border-[#173E38]/10 bg-white shadow-sm">
+              <CardContent className="p-6">
+                <div className="text-lg font-semibold text-[#173E38]">{item}</div>
+                <div className="mt-3 text-sm leading-7 text-[#173E38]/65">这里可以继续替换成正式的服务介绍文案。</div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CityPage({ city, hotels, onOpenMonterey }: { city: Exclude<CityKey, 'All'>; hotels: HotelRecord[]; onOpenMonterey: () => void }) {
+  const meta = cityMeta[city];
+  return (
+    <div className="px-6 py-14 md:px-10">
+      <div className="mx-auto max-w-7xl">
+        <div className="rounded-[2.2rem] p-8 text-white shadow-2xl" style={{ background: meta.accent }}>
+          <div className="text-xs uppercase tracking-[0.22em] text-white/58">Destination Page</div>
+          <h2 className="mt-3 text-4xl font-semibold">{meta.label}</h2>
+          <p className="mt-4 max-w-2xl text-sm leading-8 text-white/82 md:text-base">{meta.desc}</p>
+        </div>
+        <div className="mt-10">
+          <div className="mb-6 flex items-center justify-between gap-4">
+            <div>
+              <div className="text-xs uppercase tracking-[0.22em] text-[#173E38]/45">Hotels in {city}</div>
+              <h3 className="mt-2 text-3xl font-semibold text-[#173E38]">{meta.label} 酒店列表</h3>
+            </div>
+            <div className="rounded-2xl bg-white px-4 py-3 text-sm text-[#173E38] ring-1 ring-[#173E38]/10">共 {hotels.length} 家</div>
+          </div>
+          <HotelsGrid hotels={hotels} onOpenMonterey={onOpenMonterey} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ContactPage() {
+  return (
+    <section className="px-6 py-16 md:px-10">
+      <div className="mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] border border-[#173E38]/10 bg-[linear-gradient(135deg,#143A35_0%,#1C5A51_100%)] text-white shadow-2xl">
+        <div className="grid gap-8 px-6 py-10 md:grid-cols-[1.05fr_0.95fr] md:px-10 md:py-12">
+          <div>
+            <div className="text-xs uppercase tracking-[0.22em] text-white/55">Contact</div>
+            <h3 className="mt-3 text-3xl font-semibold md:text-4xl">联系与下一步</h3>
+            <p className="mt-5 max-w-2xl text-sm leading-8 text-white/78 md:text-base">
+              Menu 已调整为 Home / Service / Hotels / Contact。Hotels 下有 Osaka / Kyoto / Tokyo。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MontereyBookingPage() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, []);
+
+  const [selectedRoom, setSelectedRoom] = useState<string>('single');
+  const selected = montereyRooms.find((room) => room.id === selectedRoom) ?? montereyRooms[0];
+
+  return (
+    <div className="px-6 py-14 md:px-10">
+      <div className="mx-auto max-w-7xl">
+        <div className="overflow-hidden rounded-[2.4rem] border border-[#173E38]/10 bg-white shadow-xl">
+          <div className="grid md:grid-cols-[1.05fr_0.95fr]">
+            <div className="relative min-h-[320px] bg-[#173E38]">
+              <img src="https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=1600" alt="Hotel Monterey La Soeur Osaka" className="h-full w-full object-cover opacity-85" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0f2f2a]/85 via-[#0f2f2a]/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+                <div className="text-xs uppercase tracking-[0.22em] text-white/58">Room Reservation Preview</div>
+                <h2 className="mt-3 text-4xl font-semibold">ホテルモントレ ラ・スール大阪</h2>
+                <div className="mt-4 flex items-center gap-5 text-sm text-white/82">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />京橋駅 徒歩約5分
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CalendarDays className="h-4 w-4" />朝食付き
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="bg-[#F9F6EE] p-8">
+              <div className="text-xs uppercase tracking-[0.22em] text-[#173E38]/45">Select Room</div>
+              <div className="mt-4 grid gap-3">
+                {montereyRooms.map((room) => {
+                  const active = room.id === selectedRoom;
+                  return (
+                    <button
+                      key={room.id}
+                      onClick={() => setSelectedRoom(room.id)}
+                      className={`flex items-center justify-between rounded-[1.4rem] border px-4 py-4 text-left transition ${
+                        active ? 'border-[#173E38] bg-[#173E38] text-white shadow-lg' : 'border-[#173E38]/10 bg-white text-[#173E38] hover:bg-[#F7F3E8]'
+                      }`}
+                    >
+                      <div>
+                        <div className="text-lg font-semibold">{room.roomType}</div>
+                        <div className={`mt-1 text-sm ${active ? 'text-white/70' : 'text-[#173E38]/58'}`}>
+                          {room.size} / {room.occupancy}
+                        </div>
+                      </div>
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-10 grid gap-8 md:grid-cols-[0.95fr_1.05fr]">
+          <Card className="overflow-hidden rounded-[2rem] border-[#173E38]/10 bg-white shadow-sm">
+            <div className="h-72 overflow-hidden">
+              <img src={selected.image} alt={selected.roomType} className="h-full w-full object-cover" />
+            </div>
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-2xl font-semibold text-[#173E38]">{selected.roomType}</div>
+                  <div className="mt-2 flex items-center gap-4 text-sm text-[#173E38]/64">
+                    <span className="flex items-center gap-2">
+                      <Users className="h-4 w-4" />{selected.occupancy}
+                    </span>
+                    <span>{selected.size}</span>
+                  </div>
+                </div>
+                <div className="rounded-2xl bg-[#F7F3E8] px-3 py-2 text-xs font-medium text-[#173E38]">Preview</div>
+              </div>
+              <p className="mt-5 text-sm leading-7 text-[#173E38]/68">{selected.note}</p>
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-[2rem] border-[#173E38]/10 bg-white shadow-sm">
+            <CardContent className="p-6">
+              <div className="text-xs uppercase tracking-[0.22em] text-[#173E38]/45">Pricing Table</div>
+              <h3 className="mt-2 text-2xl font-semibold text-[#173E38]">客房预约画面</h3>
+              <div className="mt-6 grid gap-3">
+                {Object.entries(selected.prices).map(([season, price]) => (
+                  <div key={season} className="flex items-center justify-between rounded-2xl border border-[#173E38]/10 bg-[#FBFAF6] px-4 py-4">
+                    <div>
+                      <div className="text-lg font-semibold text-[#173E38]">区分 {season}</div>
+                      <div className="text-sm text-[#173E38]/58">1泊朝食付き / 税別ベース</div>
+                    </div>
+                    <div className="text-xl font-semibold text-[#173E38]">{price}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 rounded-[1.6rem] border border-[#173E38]/10 bg-[#F7F3E8] p-5">
+                <div className="text-sm font-semibold text-[#173E38]">咨询方式栏</div>
+                <div className="mt-4 grid gap-3">
+                  {[
+                    ['电话咨询', '+81 00-0000-0000'],
+                    ['邮件咨询', 'info@japandreamservice.jp'],
+                    ['微信 / LINE', '可在正式版中接入'],
+                  ].map(([label, value]) => (
+                    <div key={label} className="flex items-center justify-between rounded-2xl border border-[#173E38]/10 bg-white px-4 py-4">
+                      <div className="text-sm font-medium text-[#173E38]">{label}</div>
+                      <div className="text-sm text-[#173E38]/68">{value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HomeOrHotelsPage({
+  mode,
+  heroText,
+  query,
+  setQuery,
+  activeCity,
+  setActiveCity,
+  filteredHotels,
+  onOpenMonterey,
+  onGoHotels,
+  onGoService,
+  hotelPreviewRef,
+}: {
+  mode: 'Home' | 'Hotels';
+  heroText: { label: string; desc: string; accent: string };
+  query: string;
+  setQuery: (value: string) => void;
+  activeCity: CityKey;
+  setActiveCity: (value: CityKey) => void;
+  filteredHotels: HotelRecord[];
+  onOpenMonterey: () => void;
+  onGoHotels: () => void;
+  onGoService: () => void;
+  hotelPreviewRef: React.RefObject<HTMLElement>;
+}) {
+  const isHotels = mode === 'Hotels';
+
+  return (
+    <>
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,#103631_0%,#1D5B52_55%,#275A52_100%)]" />
+        <div className="absolute inset-0 opacity-15" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.14) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.14) 1px, transparent 1px)', backgroundSize: '42px 42px' }} />
+        <div className="absolute -left-12 top-20 h-48 w-48 rounded-full bg-[#E7D8A8]/10 blur-3xl" />
+        <div className="absolute right-0 top-12 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
+
+        <div className="relative mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-[1.05fr_0.95fr] md:px-10 md:py-24">
+          <div className="text-white">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.85 }} className="inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/10 px-4 py-2 text-xs tracking-[0.18em] text-white/82">
+              <Sparkles className="h-4 w-4" />
+              JAPAN DREAM SERVICE
+            </motion.div>
+            <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.95 }} className="mt-7 text-4xl font-semibold leading-tight md:text-6xl">
+              {isHotels ? 'Hotels 预览入口' : '日本旅游服务信息'}
+              <br />
+              {isHotels ? '向下查看酒店列表' : '一目でわかる展示入口'}
+            </motion.h2>
+            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45, duration: 1 }} className="mt-6 max-w-xl text-base leading-8 text-white/82">
+              {isHotels
+                ? 'Hotels 页面不再显示额外按钮，中间下方放置呼吸式向下箭头。点击后会平滑滑入到下方的酒店预览区。'
+                : '首页右侧作为特价优惠区，左侧主按钮调整为【去Hotels】【去Service】。'}
+            </motion.p>
+            {!isHotels && (
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65, duration: 0.9 }} className="mt-8 flex flex-wrap gap-4">
+                <Button className="rounded-2xl px-6 text-[#173E38]" style={{ backgroundColor: colors.cream }} onClick={onGoHotels}>
+                  去Hotels
+                </Button>
+                <Button variant="outline" className="rounded-2xl border-white/24 bg-transparent px-6 text-white hover:bg-white/10" onClick={onGoService}>
+                  去Service
+                </Button>
+              </motion.div>
+            )}
+          </div>
+
+          <motion.div initial={{ opacity: 0, scale: 0.96, y: 18 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ delay: 0.35, duration: 1 }}>
+            <Card className="overflow-hidden rounded-[2.2rem] border-white/12 bg-white/96 shadow-2xl">
+              <CardContent className="p-0">
+                <div className="border-b border-[#173E38]/8 bg-[#F7F3E8] p-5">
+                  <div className="text-xs uppercase tracking-[0.22em] text-[#173E38]/45">{isHotels ? 'Hotels Overview' : 'Special Offers'}</div>
+                  <div className="mt-2 text-2xl font-semibold text-[#173E38]">{isHotels ? `${heroText.label} 资源预览` : '特价区 / 优惠区'}</div>
+                  <div className="mt-2 text-sm leading-7 text-[#173E38]/62">{isHotels ? heroText.desc : '适合作为首页右侧重点推荐区，展示限时优惠、团体住宿特价与热门推荐。'}</div>
+                </div>
+                <div className="p-5">
+                  {isHotels ? (
+                    <div className="rounded-[1.8rem] p-4 text-white" style={{ background: heroText.accent }}>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-xs uppercase tracking-[0.2em] text-white/58">Current Selection</div>
+                          <div className="mt-2 text-2xl font-semibold">{heroText.label}</div>
+                        </div>
+                        <div className="rounded-2xl border border-white/16 bg-white/10 px-3 py-2 text-xs">Hotels View</div>
+                      </div>
+                      <div className="mt-6 grid gap-3">
+                        {filteredHotels.slice(0, 3).map((hotel) => (
+                          <div key={hotel.en} className="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur-md">
+                            <div className="text-sm font-semibold">{hotel.name}</div>
+                            <div className="mt-1 text-xs text-white/65">{hotel.en}</div>
+                            <div className="mt-3 flex flex-wrap gap-2 text-xs text-white/78">
+                              <span>{hotel.size}</span>
+                              <span>{hotel.price}</span>
+                              <span>{hotel.note}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="grid gap-3">
+                      {[
+                        ['大阪限定', 'HOTEL MONTEREY LA SOEUR OSAKA', '朝食付き / 温浴设施利用可'],
+                        ['京都推荐', 'hotel MONday 京都烏丸二条', '和现代风格 / 市区动线便利'],
+                        ['东京精选', 'hotel MONday Premium TOYOSU', '家庭与团队入住推荐'],
+                      ].map(([tag, title, desc]) => (
+                        <div key={title} className="rounded-[1.6rem] border border-[#173E38]/10 bg-[#FBFAF6] p-4">
+                          <div className="text-xs uppercase tracking-[0.2em] text-[#173E38]/45">{tag}</div>
+                          <div className="mt-2 text-lg font-semibold text-[#173E38]">{title}</div>
+                          <div className="mt-2 text-sm leading-6 text-[#173E38]/62">{desc}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+      </section>
+
+      {isHotels && (
+        <section className="relative flex justify-center bg-white/55 pt-2 pb-4">
+          <motion.button
+            onClick={() => hotelPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+            animate={{ y: [0, 12, 0], opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+            className="group flex flex-col items-center text-[#173E38]"
+            aria-label="Scroll to hotel preview"
+          >
+            <span className="mb-2 text-xs uppercase tracking-[0.22em] text-[#173E38]/45">Scroll Down</span>
+            <span className="flex h-16 w-16 items-center justify-center rounded-full border border-[#173E38]/15 bg-white shadow-lg">
+              <ArrowDown className="h-8 w-8 transition group-hover:translate-y-1" />
+            </span>
+          </motion.button>
+        </section>
+      )}
+
+      <section ref={hotelPreviewRef} className="border-y border-[#173E38]/8 bg-white/55">
+        <div className="mx-auto max-w-7xl px-6 py-16 md:px-10">
+          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <div>
+              <div className="text-xs uppercase tracking-[0.22em] text-[#173E38]/45">Hotels</div>
+              <h3 className="mt-3 text-3xl font-semibold text-[#173E38] md:text-4xl">Home 页面预览酒店</h3>
+              <p className="mt-4 max-w-2xl text-sm leading-8 text-[#173E38]/68 md:text-base">这里保留总览区。点击 ホテルモントレ ラ・スール大阪 的按钮，会进入客房预约画面。</p>
+            </div>
+            <div className="relative min-w-[280px]">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#173E38]/45" />
+              <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="搜索酒店或城市" className="h-12 rounded-2xl border-[#173E38]/10 bg-white pl-10" />
+            </div>
+          </div>
+          <div className="mt-8 flex flex-wrap gap-2">
+            {(['All', 'Osaka', 'Kyoto', 'Tokyo'] as const).map((city) => (
+              <button key={city} onClick={() => setActiveCity(city)} className={`rounded-2xl px-4 py-3 text-sm transition ${activeCity === city ? 'bg-[#173E38] text-white shadow' : 'bg-white text-[#173E38]/72 ring-1 ring-[#173E38]/10 hover:bg-[#F7F3E8]'}`}>
+                {city === 'All' ? '全部' : city}
+              </button>
+            ))}
+          </div>
+          <div className="mt-10">
+            <HotelsGrid hotels={filteredHotels} onOpenMonterey={onOpenMonterey} />
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+export default function JapanDreamServicePrototype() {
+  const hotelPreviewRef = useRef<HTMLElement>(null);
+  const [showSplash, setShowSplash] = useState(true);
+  const [activeCity, setActiveCity] = useState<CityKey>('All');
+  const [activePage, setActivePage] = useState<PageKey>('Home');
+  const [query, setQuery] = useState('');
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setShowSplash(false), 3000);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const filteredHotels = useMemo(() => {
+    return hotelData.filter((hotel) => {
+      const cityMatch = activeCity === 'All' || hotel.city === activeCity;
+      const q = query.trim().toLowerCase();
+      const queryMatch =
+        q === '' ||
+        hotel.name.toLowerCase().includes(q) ||
+        hotel.en.toLowerCase().includes(q) ||
+        hotel.city.toLowerCase().includes(q) ||
+        hotel.cityLabel.toLowerCase().includes(q);
+      return cityMatch && queryMatch;
+    });
+  }, [activeCity, query]);
+
+  const osakaHotels = hotelData.filter((hotel) => hotel.city === 'Osaka');
+  const kyotoHotels = hotelData.filter((hotel) => hotel.city === 'Kyoto');
+  const tokyoHotels = hotelData.filter((hotel) => hotel.city === 'Tokyo');
+  const heroText = cityMeta[activeCity];
+
+  const goPage = (page: PageKey) => {
+    setActivePage(page);
+  };
+
+  const goHotelsPreview = () => {
+    setActivePage('Hotels');
+    window.setTimeout(() => hotelPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 180);
+  };
+
+  const renderPage = () => {
+    switch (activePage) {
+      case 'Service':
+        return <ServicePage title="Service Overview" />;
+      case 'ServiceTravel':
+        return <ServicePage title="Travel Planning" />;
+      case 'ServiceHotel':
+        return <ServicePage title="Hotel Arrangement" />;
+      case 'ServiceGroup':
+        return <ServicePage title="Group Support" />;
+      case 'Osaka':
+        return <CityPage city="Osaka" hotels={osakaHotels} onOpenMonterey={() => goPage('MontereyBooking')} />;
+      case 'Kyoto':
+        return <CityPage city="Kyoto" hotels={kyotoHotels} onOpenMonterey={() => goPage('MontereyBooking')} />;
+      case 'Tokyo':
+        return <CityPage city="Tokyo" hotels={tokyoHotels} onOpenMonterey={() => goPage('MontereyBooking')} />;
+      case 'Contact':
+        return <ContactPage />;
+      case 'MontereyBooking':
+        return <MontereyBookingPage />;
+      case 'Hotels':
+        return (
+          <HomeOrHotelsPage
+            mode="Hotels"
+            heroText={heroText}
+            query={query}
+            setQuery={setQuery}
+            activeCity={activeCity}
+            setActiveCity={setActiveCity}
+            filteredHotels={filteredHotels}
+            onOpenMonterey={() => goPage('MontereyBooking')}
+            onGoHotels={goHotelsPreview}
+            onGoService={() => goPage('Service')}
+            hotelPreviewRef={hotelPreviewRef}
+          />
+        );
+      case 'Home':
+      default:
+        return (
+          <HomeOrHotelsPage
+            mode="Home"
+            heroText={heroText}
+            query={query}
+            setQuery={setQuery}
+            activeCity={activeCity}
+            setActiveCity={setActiveCity}
+            filteredHotels={filteredHotels}
+            onOpenMonterey={() => goPage('MontereyBooking')}
+            onGoHotels={goHotelsPreview}
+            onGoService={() => goPage('Service')}
+            hotelPreviewRef={hotelPreviewRef}
+          />
+        );
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#F6F2E8] text-[#173E38]">
+      <AnimatePresence mode="wait">
+        {showSplash ? (
+          <motion.section
+            key="splash"
+            className="fixed inset-0 z-50 overflow-hidden"
+            style={{ background: `radial-gradient(circle at 50% 20%, ${colors.green2} 0%, ${colors.bg} 65%)` }}
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 1.02, transition: { duration: 2.2 } }}
+          >
+            <motion.div
+              className="absolute inset-0"
+              animate={{ opacity: [0.2, 0.42, 0.2] }}
+              transition={{ duration: 3.4, repeat: Infinity, ease: 'easeInOut' }}
+              style={{
+                backgroundImage:
+                  'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.16), transparent 18%), radial-gradient(circle at 70% 45%, rgba(255,255,255,0.11), transparent 20%), linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',
+                backgroundSize: 'auto, auto, 40px 40px, 40px 40px',
+              }}
+            />
+            <div className="relative flex min-h-screen items-center justify-center px-6">
+              <div className="text-center">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.6, y: 22 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ duration: 1.9, ease: [0.22, 1, 0.36, 1] }}
+                  className="relative mx-auto w-fit"
+                >
+                  <div className="absolute inset-0 rounded-full bg-[#E7D8A8]/18 blur-3xl" />
+                  <div className="relative text-[9rem] leading-none text-[#F6EDCF] md:text-[12rem]">∞</div>
+                </motion.div>
+                <motion.h1
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7, duration: 1.4 }}
+                  className="mt-3 text-3xl font-semibold tracking-wide text-[#F8F4E2] md:text-5xl"
+                  style={{ fontFamily: 'Georgia, serif' }}
+                >
+                  Japan Dream Service
+                </motion.h1>
+              </div>
+            </div>
+          </motion.section>
+        ) : (
+          <motion.div key={activePage} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.55 }}>
+            <header className="sticky top-0 z-40 border-b border-[#173E38]/8 bg-[#F6F2E8]/80 backdrop-blur-xl">
+              <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
+                <button className="flex items-center gap-3 text-left" onClick={() => goPage('Home')}>
+                  <div className="text-4xl leading-none text-[#C9B06B]">∞</div>
+                  <div>
+                    <div className="text-base font-semibold" style={{ fontFamily: 'Georgia, serif' }}>Japan Dream Service</div>
+                    <div className="text-[11px] uppercase tracking-[0.22em] text-[#173E38]/48">Travel Preview</div>
+                  </div>
+                </button>
+                <nav className="hidden items-center gap-2 md:flex">
+                  <button onClick={() => goPage('Home')} className={`rounded-2xl px-4 py-2 text-sm transition ${activePage === 'Home' ? 'bg-[#173E38] text-white shadow' : 'text-[#173E38]/72 hover:bg-white hover:text-[#173E38]'}`}>
+                    Home
+                  </button>
+                  <div className="group relative">
+                    <button onClick={() => goPage('Service')} className={`flex items-center gap-1 rounded-2xl px-4 py-2 text-sm transition ${activePage === 'Service' ? 'bg-[#173E38] text-white shadow' : 'text-[#173E38]/72 hover:bg-white hover:text-[#173E38]'}`}>
+                      Service <ChevronDown className="h-4 w-4" />
+                    </button>
+                    <div className="invisible absolute left-0 top-12 z-20 w-64 rounded-2xl border border-[#173E38]/10 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:opacity-100">
+                      <button onClick={() => goPage('ServiceTravel')} className="w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-[#F7F3E8]">Travel Planning</button>
+                      <button onClick={() => goPage('ServiceHotel')} className="w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-[#F7F3E8]">Hotel Arrangement</button>
+                      <button onClick={() => goPage('ServiceGroup')} className="w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-[#F7F3E8]">Group Support</button>
+                    </div>
+                  </div>
+                  <div className="group relative">
+                    <button onClick={goHotelsPreview} className={`flex items-center gap-1 rounded-2xl px-4 py-2 text-sm transition ${activePage === 'Hotels' ? 'bg-[#173E38] text-white shadow' : 'text-[#173E38]/72 hover:bg-white hover:text-[#173E38]'}`}>
+                      Hotels <ChevronDown className="h-4 w-4" />
+                    </button>
+                    <div className="invisible absolute left-0 top-12 z-20 w-56 rounded-2xl border border-[#173E38]/10 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:opacity-100">
+                      <button onClick={() => goPage('Osaka')} className="w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-[#F7F3E8]">Osaka</button>
+                      <button onClick={() => goPage('Kyoto')} className="w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-[#F7F3E8]">Kyoto</button>
+                      <button onClick={() => goPage('Tokyo')} className="w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-[#F7F3E8]">Tokyo</button>
+                    </div>
+                  </div>
+                  <button onClick={() => goPage('Contact')} className={`rounded-2xl px-4 py-2 text-sm transition ${activePage === 'Contact' ? 'bg-[#173E38] text-white shadow' : 'text-[#173E38]/72 hover:bg-white hover:text-[#173E38]'}`}>
+                    Contact
+                  </button>
+                </nav>
+              </div>
+            </header>
+            <main>{renderPage()}</main>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
