@@ -375,7 +375,7 @@ export default function AdminPage() {
       setMsg({
         kind: 'err',
         text: m.startsWith('409')
-          ? '他の場所で先に更新されています。「最新を読み込む」を押してから、もう一度編集してください。'
+          ? '他の場所で先に更新されています。「クリア」を押してから、もう一度編集してください。'
           : `保存に失敗しました：${m}`,
       });
     } finally {
@@ -423,8 +423,17 @@ export default function AdminPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-3xl font-semibold text-[#173E38]">ホテル管理画面</h2>
         <div className="flex flex-wrap items-center gap-2 text-sm">
-          <button onClick={() => load(token)} disabled={loading} className="rounded-xl border border-[#173E38]/15 bg-white px-4 py-2 text-[#173E38] hover:bg-[#F7F3E8]">最新を読み込む</button>
-          <button onClick={logout} className="rounded-xl border border-[#173E38]/15 bg-white px-4 py-2 text-[#173E38] hover:bg-[#F7F3E8]">トークンを削除</button>
+          <button
+            onClick={() => {
+              if ((dirty || contactDirty) && !confirm('未保存の変更を破棄して、公開中の最新の内容に戻します。よろしいですか？')) return;
+              load(token);
+            }}
+            disabled={loading}
+            title="未保存の変更を破棄して、公開中の内容を読み込み直します"
+            className="rounded-xl border border-[#173E38]/15 bg-white px-4 py-2 text-[#173E38] hover:bg-[#F7F3E8]"
+          >
+            クリア
+          </button>
           <button onClick={save} disabled={saving || (!dirty && !contactDirty)} className="rounded-xl bg-[#173E38] px-6 py-2 text-white hover:bg-[#143A35] disabled:opacity-40">
             {saving ? '保存中…' : dirty || contactDirty ? '保存して公開' : '変更なし'}
           </button>
@@ -680,7 +689,17 @@ export default function AdminPage() {
           </div>
         )}
       </div>
-      <button onClick={goHome} className="mt-8 text-sm text-[#173E38]/60 underline">サイトに戻る</button>
+      <div className="mt-8 flex items-end justify-between">
+        <button onClick={goHome} className="text-sm text-[#173E38]/60 underline">サイトに戻る</button>
+        <button
+          onClick={() => {
+            if (confirm('保存済みのトークンをこのブラウザから削除します。再度使うには、トークンの入力が必要です。よろしいですか？')) logout();
+          }}
+          className="text-[11px] text-[#173E38]/35 underline hover:text-[#173E38]/60"
+        >
+          トークンを削除
+        </button>
+      </div>
     </div>
   );
 }
