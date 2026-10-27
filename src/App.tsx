@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowDown,
@@ -29,6 +29,7 @@ type PageKey =
   | 'ServiceGroup'
   | 'Hotels'
   | `Area:${string}`
+  | `Hotel:${string}`
   | 'Contact'
   | 'MontereyBooking';
 
@@ -65,6 +66,10 @@ type RoomPlan = {
   };
   note: string;
 };
+
+const NavContext = createContext<(page: PageKey) => void>(() => {});
+
+const hotelPage = (hotel: { en: string }): PageKey => (hotel.en === 'HOTEL MONTEREY LA SOEUR OSAKA' ? 'MontereyBooking' : (`Hotel:${hotel.en}` as PageKey));
 
 const colors = {
   bg: '#0E2E2A',
@@ -130,6 +135,7 @@ function HotelPreviewVisual({ city, name, image }: { city: string; name: string;
 }
 
 function HotelsGrid({ hotels, onOpenMonterey }: { hotels: HotelRecord[]; onOpenMonterey: () => void }) {
+  const go = useContext(NavContext);
   return (
     <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
       {hotels.map((hotel, index) => {
@@ -149,7 +155,7 @@ function HotelsGrid({ hotels, onOpenMonterey }: { hotels: HotelRecord[]; onOpenM
               <CardContent className="px-5 pb-5 pt-0">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <div className="text-lg font-semibold leading-7 text-[#173E38]">{hotel.name}</div>
+                    <button onClick={() => go(hotelPage(hotel))} className="text-left text-lg font-semibold leading-7 text-[#173E38] hover:underline">{hotel.name}</button>
                     <div className="mt-1 text-sm text-[#173E38]/54">{hotel.en}</div>
                   </div>
                   <div className="rounded-2xl bg-[#F7F3E8] px-3 py-2 text-xs font-medium text-[#173E38]">{hotel.cityLabel}</div>
@@ -189,6 +195,105 @@ function HotelsGrid({ hotels, onOpenMonterey }: { hotels: HotelRecord[]; onOpenM
           </motion.div>
         );
       })}
+    </div>
+  );
+}
+
+function HotelsIndexPage() {
+  const go = useContext(NavContext);
+  return (
+    <div className="px-6 py-14 md:px-10">
+      <div className="mx-auto max-w-7xl">
+        <div className="rounded-[2.2rem] bg-[linear-gradient(135deg,#3A665D_0%,#1D4B44_100%)] p-8 text-white shadow-2xl">
+          <div className="text-xs uppercase tracking-[0.22em] text-white/58">Hotels</div>
+          <h2 className="mt-3 text-4xl font-semibold">地域別ホテル一覧</h2>
+          <p className="mt-4 text-sm leading-8 text-white/82 md:text-base">ホテル名をクリックすると、詳細ページへ移動します。（全 {hotelData.length} 軒）</p>
+        </div>
+        <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {areas.map((a) => {
+            const list = hotelData.filter((h) => h.city === a.key);
+            if (list.length === 0) return null;
+            return (
+              <Card key={a.key} className="rounded-[1.8rem] border-[#173E38]/10 bg-white shadow-sm">
+                <CardContent className="p-6">
+                  <div className="flex items-baseline justify-between">
+                    <button onClick={() => go(`Area:${a.key}` as PageKey)} className="text-xl font-semibold text-[#173E38] hover:underline">{a.label}</button>
+                    <span className="text-xs text-[#173E38]/50">{list.length} 軒</span>
+                  </div>
+                  <ul className="mt-4 grid gap-2">
+                    {list.map((h) => (
+                      <li key={h.en}>
+                        <button onClick={() => go(hotelPage(h))} className="text-left text-sm leading-6 text-[#173E38]/80 hover:text-[#173E38] hover:underline">
+                          {h.name}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HotelDetailPage({ hotel }: { hotel: HotelRecord }) {
+  const go = useContext(NavContext);
+  const meta = cityMeta[hotel.city];
+  const rows: [string, string | undefined][] = [
+    ['エリア', hotel.cityLabel],
+    ['房型 / 面积', hotel.size],
+    ['价格', hotel.price],
+    ['税费', hotel.tax],
+    ['備考', hotel.note],
+    ['住所', hotel.address],
+    ['TEL', hotel.phone],
+  ];
+  return (
+    <div className="px-6 py-14 md:px-10">
+      <div className="mx-auto max-w-5xl">
+        <button onClick={() => go('Hotels')} className="mb-4 flex items-center gap-1 text-sm text-[#173E38]/70 hover:underline">
+          <ChevronRight className="h-4 w-4 rotate-180" />地域別ホテル一覧へ戻る
+        </button>
+        <div className="overflow-hidden rounded-[2.2rem] border border-[#173E38]/10 bg-white shadow-xl">
+          <div className="relative h-64">
+            <img src={hotel.image} alt={hotel.name} className="h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0f2f2a]/85 via-[#0f2f2a]/20 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+              <div className="text-xs uppercase tracking-[0.22em] text-white/58">{meta?.label}</div>
+              <h2 className="mt-2 text-3xl font-semibold md:text-4xl">{hotel.name}</h2>
+              <div className="mt-1 text-sm text-white/75">{hotel.en}</div>
+            </div>
+          </div>
+          <div className="p-8">
+            <Stars count={hotel.stars} />
+            <div className="mt-6 grid gap-3">
+              {rows
+                .filter(([, v]) => v)
+                .map(([k, v]) => (
+                  <div key={k} className="grid gap-1 border-b border-[#173E38]/8 pb-3 text-sm md:grid-cols-[140px_1fr]">
+                    <div className="text-[#173E38]/55">{k}</div>
+                    <div className="text-[#173E38]">{v}</div>
+                  </div>
+                ))}
+            </div>
+            {hotel.highlights && (
+              <div className="mt-5 flex flex-wrap gap-2">
+                {hotel.highlights.map((tag) => (
+                  <span key={tag} className="rounded-full bg-[#F7F3E8] px-3 py-1 text-xs text-[#173E38]">{tag}</span>
+                ))}
+              </div>
+            )}
+            {hotel.url && (
+              <Button className="mt-8 rounded-2xl bg-[#173E38] px-6 text-white hover:bg-[#143A35]" onClick={() => window.open(hotel.url, '_blank', 'noopener')}>
+                公式サイト <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -597,10 +702,17 @@ export default function JapanDreamServicePrototype() {
 
   const goHotelsPreview = () => {
     setActivePage('Hotels');
-    window.setTimeout(() => hotelPreviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 180);
   };
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [activePage]);
+
   const renderPage = () => {
+    if (activePage.startsWith('Hotel:')) {
+      const hotel = hotelData.find((h) => h.en === activePage.slice(6));
+      return hotel ? <HotelDetailPage hotel={hotel} /> : <HotelsIndexPage />;
+    }
     if (activePage.startsWith('Area:')) {
       const key = activePage.slice(5);
       return <CityPage city={key} hotels={hotelData.filter((hotel) => hotel.city === key)} onOpenMonterey={() => goPage('MontereyBooking')} />;
@@ -619,21 +731,7 @@ export default function JapanDreamServicePrototype() {
       case 'MontereyBooking':
         return <MontereyBookingPage />;
       case 'Hotels':
-        return (
-          <HomeOrHotelsPage
-            mode="Hotels"
-            heroText={heroText}
-            query={query}
-            setQuery={setQuery}
-            activeCity={activeCity}
-            setActiveCity={setActiveCity}
-            filteredHotels={filteredHotels}
-            onOpenMonterey={() => goPage('MontereyBooking')}
-            onGoHotels={goHotelsPreview}
-            onGoService={() => goPage('Service')}
-            hotelPreviewRef={hotelPreviewRef}
-          />
-        );
+        return <HotelsIndexPage />;
       case 'Home':
       default:
         return (
@@ -655,6 +753,7 @@ export default function JapanDreamServicePrototype() {
   };
 
   return (
+    <NavContext.Provider value={goPage}>
     <div className="min-h-screen bg-[#F6F2E8] text-[#173E38]">
       <AnimatePresence mode="wait">
         {showSplash ? (
@@ -744,5 +843,6 @@ export default function JapanDreamServicePrototype() {
         )}
       </AnimatePresence>
     </div>
+    </NavContext.Provider>
   );
 }
