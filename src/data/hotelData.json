@@ -92,17 +92,23 @@
   {
     "city": "Osaka",
     "cityLabel": "大阪市内",
-    "name": "嵐ホテルなんば南",
+    "name": "嵐ホテル難波南",
     "en": "Arashi Hotel Nambaminami",
     "stars": 4,
-    "size": "25㎡以上",
+    "size": "ツイン / トリプル",
     "price": "平日 8,500円〜（値段応相談） / 土曜祝日 +1,000円",
     "tax": "",
-    "note": "大阪市内 / Booking 4星",
+    "note": "JR今宮駅 徒歩約5分 / 地下鉄 大国町駅 徒歩約10分",
     "address": "〒557-0021 大阪府大阪市西成区北開1丁目3-18",
     "phone": "03 6536 8118",
     "url": "https://sites.google.com/view/arashi-hotel-nambaminami/",
-    "image": "https://images.unsplash.com/photo-1551918120-9739cb430c6d?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1551918120-9739cb430c6d?q=80&w=1200",
+    "highlights": [
+      "アパートメント型",
+      "朝食付き",
+      "全室に洗濯機・調理設備",
+      "大型バス駐車可（団体向け）"
+    ]
   },
   {
     "city": "Osaka",
@@ -126,13 +132,18 @@
     "en": "HOTEL MONTEREY LA SOEUR OSAKA",
     "stars": 4,
     "size": "16㎡ / 20㎡ / 22㎡ / 26㎡",
-    "price": "10,500円〜 26,500円",
+    "price": "10,500円〜26,500円（1名・朝食付き）",
     "tax": "宿泊税別",
-    "note": "京橋駅 徒歩約5分 / 温泉・朝食付きプランあり（予約画面サンプル）",
+    "note": "京橋駅 徒歩約5分",
     "address": "大阪府大阪市中央区城見2丁目2-22",
     "phone": "",
-    "url": "",
-    "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200"
+    "url": "https://www.hotelmonterey.co.jp/lasoeur_osaka/",
+    "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200",
+    "highlights": [
+      "朝食バイキング",
+      "温浴施設（サウナ付き・無料）",
+      "トリプルルームあり"
+    ]
   },
   {
     "city": "Kobe",

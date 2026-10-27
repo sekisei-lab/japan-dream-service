@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import hotelDataJson from '@/data/hotelData.json';
 import montereyRoomsJson from '@/data/montereyRooms.json';
 import areasJson from '@/data/areas.json';
+import montereyInfoJson from '@/data/montereyInfo.json';
 
 type CityKey = string;
 type PageKey =
@@ -44,6 +45,7 @@ type HotelRecord = {
   address: string;
   phone?: string;
   url?: string;
+  highlights?: string[];
   image: string;
 };
 
@@ -94,7 +96,7 @@ const cityMeta: Record<string, { label: string; desc: string; accent: string }> 
 
 function runDataSanityChecks() {
   console.assert(hotelData.length > 0, 'hotelData should not be empty');
-  console.assert(montereyRooms.length === 3, 'Monterey booking mock should include 3 room types');
+  console.assert(montereyRooms.length === 4, 'Monterey booking should include 4 room types');
   console.assert(montereyRooms.every((room) => room.stock >= room.reserved), 'Stock should be >= reserved');
   console.assert(hotelData.some((hotel) => hotel.en === 'HOTEL MONTEREY LA SOEUR OSAKA'), 'Monterey hotel should exist');
   console.assert(hotelData.some((hotel) => hotel.city === 'Kyoto'), 'Kyoto hotel should exist');
@@ -160,6 +162,13 @@ function HotelsGrid({ hotels, onOpenMonterey }: { hotels: HotelRecord[]; onOpenM
                   <div>价格：{hotel.price}</div>
                   {hotel.tax && <div>税费：{hotel.tax}</div>}
                   {hotel.note && <div>{hotel.note}</div>}
+                  {hotel.highlights && (
+                    <div className="mt-1 flex flex-wrap gap-2">
+                      {hotel.highlights.map((tag) => (
+                        <span key={tag} className="rounded-full bg-[#F7F3E8] px-3 py-1 text-xs text-[#173E38]">{tag}</span>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <div className="mt-4 flex items-start gap-2 text-sm leading-6 text-[#173E38]/62">
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
@@ -342,13 +351,33 @@ function MontereyBookingPage() {
                   <div key={season} className="flex items-center justify-between rounded-2xl border border-[#173E38]/10 bg-[#FBFAF6] px-4 py-4">
                     <div>
                       <div className="text-lg font-semibold text-[#173E38]">区分 {season}</div>
-                      <div className="text-sm text-[#173E38]/58">1泊朝食付き / 税別ベース</div>
+                      <div className="text-sm text-[#173E38]/58">1名 / 1泊朝食付き</div>
                     </div>
                     <div className="text-xl font-semibold text-[#173E38]">{price}</div>
                   </div>
                 ))}
               </div>
-              <div className="mt-6 rounded-[1.6rem] border border-[#173E38]/10 bg-[#F7F3E8] p-5">
+              <div className="mt-3 text-xs leading-6 text-[#173E38]/58">{montereyInfoJson.basis}</div>
+              <div className="mt-6 rounded-[1.6rem] border border-[#173E38]/10 bg-[#FBFAF6] p-5">
+                <div className="text-sm font-semibold text-[#173E38]">ご案内</div>
+                <ul className="mt-3 grid gap-2 text-sm leading-6 text-[#173E38]/72">
+                  {montereyInfoJson.notes.map((n) => (
+                    <li key={n}>・{n}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="mt-4 rounded-[1.6rem] border border-[#173E38]/10 bg-[#FBFAF6] p-5">
+                <div className="text-sm font-semibold text-[#173E38]">キャンセルポリシー</div>
+                <div className="mt-3 grid gap-2 text-sm text-[#173E38]/72">
+                  {montereyInfoJson.cancel.map(([when, fee]) => (
+                    <div key={when} className="flex items-center justify-between border-b border-[#173E38]/8 pb-2 last:border-0 last:pb-0">
+                      <span>{when}</span>
+                      <span className="font-medium text-[#173E38]">{fee}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-4 rounded-[1.6rem] border border-[#173E38]/10 bg-[#F7F3E8] p-5">
                 <div className="text-sm font-semibold text-[#173E38]">咨询方式栏</div>
                 <div className="mt-4 grid gap-3">
                   {[
