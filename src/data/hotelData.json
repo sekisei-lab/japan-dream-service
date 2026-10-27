@@ -12,7 +12,9 @@
     "address": "〒590-0971 大阪府堺市堺区栄橋町1丁3-12",
     "phone": "072-229-4111",
     "url": "https://kuretake-inn.com/hotel/nankaisakai-station",
-    "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Osaka",
@@ -27,7 +29,9 @@
     "address": "〒530-0043 大阪市北区天満2丁目10-13",
     "phone": "06-6351-2800",
     "url": "https://www.nokuhotels.com/osaka/ja/",
-    "image": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Osaka",
@@ -42,7 +46,9 @@
     "address": "〒570-0038 大阪府守口市河原町10-5",
     "phone": "06-6994-1111",
     "url": "https://www.hotelagora-moriguchi.com/room/",
-    "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Osaka",
@@ -57,7 +63,9 @@
     "address": "〒532-0011 大阪府大阪市淀川区西中島7丁目1-17",
     "phone": "06-6304-9300",
     "url": "https://sarasahotels.com/hotel/shinosaka/",
-    "image": "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Osaka",
@@ -72,7 +80,9 @@
     "address": "〒556-0005 大阪府大阪市浪速区日本橋3丁目6-6",
     "phone": "06-6634-3390",
     "url": "https://sarasahotels.com/hotel/namba/",
-    "image": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Osaka",
@@ -87,7 +97,9 @@
     "address": "〒542-0083 大阪府大阪市中央区東心斎橋1丁目1-3",
     "phone": "06-6241-3391",
     "url": "https://sarasahotels.com/hotel/shinsaibashi/",
-    "image": "https://images.unsplash.com/photo-1521783988139-89397d761dce?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1521783988139-89397d761dce?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Osaka",
@@ -137,7 +149,9 @@
     "address": "〒557-0003 大阪府大阪市西成区天下茶屋北2丁目5-5",
     "phone": "06-6586-6717",
     "url": "",
-    "image": "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Osaka",
@@ -157,7 +171,8 @@
       "朝食バイキング",
       "温浴施設（サウナ付き・無料）",
       "トリプルルームあり"
-    ]
+    ],
+    "rooms": []
   },
   {
     "city": "Kobe",
@@ -172,7 +187,9 @@
     "address": "〒651-1522 兵庫県神戸市北区大沢町上大沢2150",
     "phone": "078-954-1000",
     "url": "https://hotel-fruitflower.jp/",
-    "image": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Kyoto",
@@ -187,7 +204,9 @@
     "address": "〒604-0857 京都府京都市中京区烏丸通二条上る蒔絵屋町261-1",
     "phone": "075-221-6210",
     "url": "https://hotel-monday.com/karasumanijo/",
-    "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Kyoto",
@@ -202,7 +221,9 @@
     "address": "〒604-0862 京都府京都市中京区烏丸夷川上る少将井225",
     "phone": "075-223-3870",
     "url": "https://hotel-monday.com/kyotomarutamachi/",
-    "image": "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Kyoto",
@@ -231,7 +252,8 @@
         "occupancy": "",
         "note": "部屋タイプお任せ"
       }
-    ]
+    ],
+    "highlights": []
   },
   {
     "city": "Kansai",
@@ -246,7 +268,9 @@
     "address": "〒590-0960 大阪府堺市堺区少林寺町西1丁1番1号",
     "phone": "072-232-0303",
     "url": "https://osakabayplaza.jp/",
-    "image": "https://images.unsplash.com/photo-1521783988139-89397d761dce?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1521783988139-89397d761dce?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Kansai",
@@ -261,7 +285,9 @@
     "address": "〒598-0007 大阪府泉佐野市上町三丁目11番21号",
     "phone": "072-464-7111",
     "url": "https://www.vessel-hotel.jp/ref/izumisano/",
-    "image": "https://images.unsplash.com/photo-1551918120-9739cb430c6d?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1551918120-9739cb430c6d?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Chubu",
@@ -276,7 +302,9 @@
     "address": "〒479-0837 愛知県常滑市新開町3丁目174-1",
     "phone": "0569-36-1600",
     "url": "https://www.springsunny.jp/",
-    "image": "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Fuji",
@@ -311,12 +339,13 @@
         "occupancy": "",
         "note": "2室"
       }
-    ]
+    ],
+    "highlights": []
   },
   {
     "city": "Fuji",
     "cityLabel": "富士山",
-    "name": "富士の森ホテル",
+    "name": "TEST 富士の森ホテル",
     "en": "Fuji no Mori Hotel",
     "stars": 4,
     "size": "20㎡",
@@ -326,7 +355,28 @@
     "address": "〒401-0301 山梨県南都留郡富士河口湖町船津6088",
     "phone": "0555-28-5188",
     "url": "http://www.fujinomorihotel.jp/",
-    "image": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1200"
+    "image": "images/hotels/fuji-no-mori-hotel-1793083980785.jpg",
+    "rooms": [
+      {
+        "roomType": "シングル",
+        "size": "18",
+        "occupancy": "1",
+        "note": "AA"
+      },
+      {
+        "roomType": "ダブル",
+        "size": "20",
+        "occupancy": "2",
+        "note": "BB"
+      },
+      {
+        "roomType": "ラグジュアリー",
+        "size": "60",
+        "occupancy": "6",
+        "note": "CC"
+      }
+    ],
+    "highlights": []
   },
   {
     "city": "Fuji",
@@ -341,7 +391,9 @@
     "address": "〒401-0502 山梨県南都留郡山中湖村平野字池畑2420-1",
     "phone": "0555-65-8888",
     "url": "https://fuji-garden.com/",
-    "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Yokohama",
@@ -356,7 +408,9 @@
     "address": "〒236-0004 横浜市金沢区福浦1-1-1",
     "phone": "045-788-8000",
     "url": "https://www.technotower.jp/",
-    "image": "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Chiba",
@@ -371,7 +425,9 @@
     "address": "〒292-0832 千葉県木更津市新田2-2-1",
     "phone": "0438-25-8888",
     "url": "https://tokyobayplaza.com/",
-    "image": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Chiba",
@@ -386,7 +442,9 @@
     "address": "〒260-0025 千葉市中央区問屋町1-45 千葉ポートスクエア",
     "phone": "043-246-1888",
     "url": "http://www.thequbehotelchiba.com",
-    "image": "https://images.unsplash.com/photo-1521783988139-89397d761dce?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1521783988139-89397d761dce?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Tokyo",
@@ -401,7 +459,9 @@
     "address": "〒135-0016 東京都江東区東陽2-3-12",
     "phone": "050-5864-4517",
     "url": "https://www.route-inn.co.jp/hotel_list/tokyo/index_hotel_id_73/",
-    "image": "https://images.unsplash.com/photo-1551918120-9739cb430c6d?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1551918120-9739cb430c6d?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Tokyo",
@@ -416,7 +476,9 @@
     "address": "〒135-0062 東京都江東区東雲1丁目2-11",
     "phone": "03-3532-8141",
     "url": "https://hotel-monday.com/toyosu/",
-    "image": "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Tokyo",
@@ -431,7 +493,9 @@
     "address": "〒134-0088 東京都江戸川区西葛西6丁目8-7",
     "phone": "03-5605-0160",
     "url": "https://hotel-monday.com/nishikasai/",
-    "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Tokyo",
@@ -446,7 +510,9 @@
     "address": "〒144-0035 東京都大田区南蒲田1丁目3-15",
     "phone": "03-3733-5511",
     "url": "https://tokyokamata.hotelorientalexpress.com/",
-    "image": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Tokyo",
@@ -461,7 +527,9 @@
     "address": "〒111-0031 東京都台東区千束1丁目15番1号",
     "phone": "03-3873-7051",
     "url": "https://www.vessel-hotel.jp/inn/asakusa/",
-    "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Tokyo",
@@ -496,7 +564,8 @@
         "occupancy": "",
         "note": ""
       }
-    ]
+    ],
+    "highlights": []
   },
   {
     "city": "Narita",
@@ -511,7 +580,9 @@
     "address": "〒286-0221 千葉県富里市七栄650-35",
     "phone": "0476-93-1234",
     "url": "https://chi-hotelsresorts.com/",
-    "image": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   },
   {
     "city": "Hiroshima",
@@ -526,6 +597,8 @@
     "address": "〒730-0044 広島県広島市中区宝町5-37",
     "phone": "082-248-7111",
     "url": "https://www.vessel-hotel.jp/hotel/hiroshima-heiwa/",
-    "image": "https://images.unsplash.com/photo-1521783988139-89397d761dce?q=80&w=1200"
+    "image": "https://images.unsplash.com/photo-1521783988139-89397d761dce?q=80&w=1200",
+    "highlights": [],
+    "rooms": []
   }
 ]
