@@ -19,6 +19,7 @@ import hotelDataJson from '@/data/hotelData.json';
 import montereyRoomsJson from '@/data/montereyRooms.json';
 import areasJson from '@/data/areas.json';
 import montereyInfoJson from '@/data/montereyInfo.json';
+import AdminPage from './Admin';
 
 type CityKey = string;
 type PageKey =
@@ -31,6 +32,7 @@ type PageKey =
   | `Area:${string}`
   | `Hotel:${string}`
   | `Room:${string}`
+  | 'Admin'
   | 'Contact'
   | 'MontereyBooking';
 
@@ -820,7 +822,7 @@ function HomeOrHotelsPage({
 
 export default function JapanDreamServicePrototype() {
   const hotelPreviewRef = useRef<HTMLElement>(null);
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(() => window.location.hash !== '#Admin');
   const [activeCity, setActiveCity] = useState<CityKey>('All');
   const readHash = (): PageKey => {
     try {
@@ -920,6 +922,14 @@ export default function JapanDreamServicePrototype() {
         );
     }
   };
+
+  if (activePage === 'Admin') {
+    return (
+      <div className="min-h-screen bg-[#F6F2E8] text-[#173E38]">
+        <AdminPage />
+      </div>
+    );
+  }
 
   return (
     <NavContext.Provider value={goPage}>
