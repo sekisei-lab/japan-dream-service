@@ -822,7 +822,21 @@ export default function JapanDreamServicePrototype() {
   const hotelPreviewRef = useRef<HTMLElement>(null);
   const [showSplash, setShowSplash] = useState(true);
   const [activeCity, setActiveCity] = useState<CityKey>('All');
-  const [activePage, setActivePage] = useState<PageKey>('Home');
+  const readHash = (): PageKey => {
+    try {
+      const h = decodeURIComponent(window.location.hash.replace(/^#/, ''));
+      return (h || 'Home') as PageKey;
+    } catch {
+      return 'Home';
+    }
+  };
+  const [activePage, setActivePage] = useState<PageKey>(readHash);
+
+  useEffect(() => {
+    const onPop = () => setActivePage(readHash());
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
   const [query, setQuery] = useState('');
 
   useEffect(() => {
@@ -848,10 +862,11 @@ export default function JapanDreamServicePrototype() {
 
   const goPage = (page: PageKey) => {
     setActivePage(page);
+    window.history.pushState(null, '', page === 'Home' ? window.location.pathname : `#${encodeURIComponent(page)}`);
   };
 
   const goHotelsPreview = () => {
-    setActivePage('Hotels');
+    goPage('Hotels');
   };
 
   useEffect(() => {
