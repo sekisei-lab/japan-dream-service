@@ -20,6 +20,7 @@ import montereyRoomsJson from '@/data/montereyRooms.json';
 import areasJson from '@/data/areas.json';
 import montereyInfoJson from '@/data/montereyInfo.json';
 import AdminPage from './Admin';
+import contactJson from '@/data/contact.json';
 
 type CityKey = string;
 type PageKey =
@@ -436,7 +437,7 @@ function RoomPreviewPage({ hotel }: { hotel: HotelRecord }) {
                   )}
                   <div className="flex items-center justify-between rounded-2xl border border-[#173E38]/10 bg-white px-4 py-4">
                     <div className="text-sm font-medium text-[#173E38]">邮件咨询</div>
-                    <div className="text-sm text-[#173E38]/68">info@japandreamservice.jp</div>
+                    <div className="text-sm text-[#173E38]/68">{contactJson.email}</div>
                   </div>
                   {hotel.url && (
                     <button onClick={() => window.open(hotel.url, '_blank', 'noopener')} className="flex items-center justify-between rounded-2xl border border-[#173E38]/10 bg-white px-4 py-4 text-left hover:bg-[#F7F3E8]">
@@ -507,16 +508,31 @@ function CityPage({ city, hotels, onOpenMonterey }: { city: string; hotels: Hote
 }
 
 function ContactPage() {
+  const rows: [string, string][] = [
+    ['电话', contactJson.phone],
+    ['邮件', contactJson.email],
+    ['微信 / LINE', contactJson.chat],
+    ['住所', contactJson.address],
+    ['営業時間', contactJson.hours],
+  ];
   return (
     <section className="px-6 py-16 md:px-10">
       <div className="mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] border border-[#173E38]/10 bg-[linear-gradient(135deg,#143A35_0%,#1C5A51_100%)] text-white shadow-2xl">
         <div className="grid gap-8 px-6 py-10 md:grid-cols-[1.05fr_0.95fr] md:px-10 md:py-12">
           <div>
-            <div className="text-xs uppercase tracking-[0.22em] text-white/55">Contact</div>
-            <h3 className="mt-3 text-3xl font-semibold md:text-4xl">联系与下一步</h3>
-            <p className="mt-5 max-w-2xl text-sm leading-8 text-white/78 md:text-base">
-              Menu 已调整为 Home / Service / Hotels / Contact。Hotels 下有 Osaka / Kyoto / Tokyo。
-            </p>
+            <div className="text-xs uppercase tracking-[0.22em] text-white/55">{contactJson.label}</div>
+            <h3 className="mt-3 text-3xl font-semibold md:text-4xl">{contactJson.title}</h3>
+            <p className="mt-5 max-w-2xl whitespace-pre-line text-sm leading-8 text-white/78 md:text-base">{contactJson.message}</p>
+          </div>
+          <div className="grid content-start gap-3">
+            {rows
+              .filter(([, v]) => v)
+              .map(([k, v]) => (
+                <div key={k} className="flex items-center justify-between gap-4 rounded-2xl border border-white/15 bg-white/10 px-4 py-4">
+                  <div className="shrink-0 text-sm text-white/65">{k}</div>
+                  <div className="text-right text-sm font-medium text-white">{v}</div>
+                </div>
+              ))}
           </div>
         </div>
       </div>
@@ -642,9 +658,9 @@ function MontereyBookingPage() {
                 <div className="text-sm font-semibold text-[#173E38]">咨询方式栏</div>
                 <div className="mt-4 grid gap-3">
                   {[
-                    ['电话咨询', '+81 00-0000-0000'],
-                    ['邮件咨询', 'info@japandreamservice.jp'],
-                    ['微信 / LINE', '可在正式版中接入'],
+                    ['电话咨询', contactJson.phone],
+                    ['邮件咨询', contactJson.email],
+                    ['微信 / LINE', contactJson.chat],
                   ].map(([label, value]) => (
                     <div key={label} className="flex items-center justify-between rounded-2xl border border-[#173E38]/10 bg-white px-4 py-4">
                       <div className="text-sm font-medium text-[#173E38]">{label}</div>

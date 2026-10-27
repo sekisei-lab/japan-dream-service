@@ -4,6 +4,7 @@ import areasJson from '@/data/areas.json';
 const REPO = 'sekisei-lab/japan-dream-service';
 const BRANCH = 'main';
 const DATA_PATH = 'src/data/hotelData.json';
+const CONTACT_PATH = 'src/data/contact.json';
 const TOKEN_KEY = 'jds_admin_token';
 
 type Room = { roomType: string; size?: string; occupancy?: string; note?: string; image?: string };
@@ -24,6 +25,7 @@ type Hotel = {
   rooms?: Room[];
   image: string;
 };
+type Contact = { label: string; title: string; message: string; phone: string; email: string; chat: string; address: string; hours: string };
 type Pending = { path: string; base64: string; preview: string };
 
 const areas = areasJson as { key: string; label: string; desc: string }[];
@@ -99,6 +101,10 @@ export default function AdminPage() {
   const [tokenInput, setTokenInput] = useState('');
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [sha, setSha] = useState('');
+  const [tab, setTab] = useState<'hotels' | 'contact'>('hotels');
+  const [contact, setContact] = useState<Contact | null>(null);
+  const [contactSha, setContactSha] = useState('');
+  const [contactDirty, setContactDirty] = useState(false);
   const [sel, setSel] = useState(0);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -118,6 +124,10 @@ export default function AdminPage() {
       const f = await gh(t, `/repos/${REPO}/contents/${DATA_PATH}?ref=${BRANCH}`);
       setHotels(JSON.parse(b64ToUtf8(f.content)));
       setSha(f.sha);
+      const c = await gh(t, `/repos/${REPO}/contents/${CONTACT_PATH}?ref=${BRANCH}`);
+      setContact(JSON.parse(b64ToUtf8(c.content)));
+      setContactSha(c.sha);
+      setContactDirty(false);
       setSel(0);
       setDirty(false);
       setPending([]);
@@ -143,11 +153,16 @@ export default function AdminPage() {
 
   useEffect(() => {
     const warn = (e: BeforeUnloadEvent) => {
-      if (dirty) e.preventDefault();
+      if (dirty || contactDirty) e.preventDefault();
     };
     window.addEventListener('beforeunload', warn);
     return () => window.removeEventListener('beforeunload', warn);
-  }, [dirty]);
+  }, [dirty, contactDirty]);
+
+  const updateContact = (patch: Partial<Contact>) => {
+    setContact((c) => (c ? { ...c, ...patch } : c));
+    setContactDirty(true);
+  };
 
   const hotel = hotels[sel];
   const update = (patch: Partial<Hotel>) => {
@@ -252,6 +267,7 @@ export default function AdminPage() {
 
   const save = async () => {
     if (!token) return;
+    if (!dirty && !contactDirty) return;
     const dup = hotels.find((h, i) => hotels.findIndex((x) => x.en === h.en) !== i);
     if (dup) {
       setMsg({ kind: 'err', text: `英語名（ID）「${dup.en}」が重複しています。ホテルごとに別の英語名にしてください。` });
@@ -264,6 +280,23 @@ export default function AdminPage() {
     setSaving(true);
     setMsg(null);
     try {
+      if (contactDirty && contact) {
+        const cr = await gh(token, `/repos/${REPO}/contents/${CONTACT_PATH}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            message: 'Update contact via admin',
+            content: utf8ToB64(JSON.stringify(contact, null, 2) + '\n'),
+            sha: contactSha,
+            branch: BRANCH,
+          }),
+        });
+        setContactSha(cr.content.sha);
+        setContactDirty(false);
+      }
+      if (!dirty) {
+        setMsg({ kind: 'ok', text: '保存しました。1〜3分ほどでサイトに反映されます。' });
+        return;
+      }
       const used = new Set(hotels.flatMap((h) => [h.image, ...(h.rooms ?? []).map((r) => r.image ?? '')]));
       for (const p of pending.filter((x) => used.has(x.path))) {
         await gh(token, `/repos/${REPO}/contents/public/${p.path}`, {
@@ -344,15 +377,57 @@ export default function AdminPage() {
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <button onClick={() => load(token)} disabled={loading} className="rounded-xl border border-[#173E38]/15 bg-white px-4 py-2 text-[#173E38] hover:bg-[#F7F3E8]">最新を読み込む</button>
           <button onClick={logout} className="rounded-xl border border-[#173E38]/15 bg-white px-4 py-2 text-[#173E38] hover:bg-[#F7F3E8]">トークンを削除</button>
-          <button onClick={save} disabled={saving || !dirty} className="rounded-xl bg-[#173E38] px-6 py-2 text-white hover:bg-[#143A35] disabled:opacity-40">
-            {saving ? '保存中…' : dirty ? '保存して公開' : '変更なし'}
+          <button onClick={save} disabled={saving || (!dirty && !contactDirty)} className="rounded-xl bg-[#173E38] px-6 py-2 text-white hover:bg-[#143A35] disabled:opacity-40">
+            {saving ? '保存中…' : dirty || contactDirty ? '保存して公開' : '変更なし'}
           </button>
         </div>
       </div>
       {msg && <div className={`mt-4 rounded-xl p-3 text-sm ${msg.kind === 'ok' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-700'}`}>{msg.text}</div>}
-      {dirty && <div className="mt-3 text-xs text-[#C2410C]">未保存の変更があります。</div>}
+      {(dirty || contactDirty) && <div className="mt-3 text-xs text-[#C2410C]">未保存の変更があります。</div>}
 
-      <div className="mt-6 grid gap-6 md:grid-cols-[300px_1fr]">
+      <div className="mt-6 flex gap-2">
+        {([['hotels', 'ホテル'], ['contact', 'コンタクト']] as const).map(([k, l]) => (
+          <button key={k} onClick={() => setTab(k)} className={`rounded-xl px-5 py-2 text-sm transition ${tab === k ? 'bg-[#173E38] text-white' : 'bg-white text-[#173E38] ring-1 ring-[#173E38]/15 hover:bg-[#F7F3E8]'}`}>
+            {l}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'contact' && contact && (
+        <div className="mt-6 max-w-3xl rounded-[1.6rem] border border-[#173E38]/10 bg-white p-6">
+          <div className="grid gap-4">
+            <Field label="小見出し（英字ラベル）">
+              <input className={inputCls} value={contact.label} onChange={(e) => updateContact({ label: e.target.value })} />
+            </Field>
+            <Field label="見出し">
+              <input className={inputCls} value={contact.title} onChange={(e) => updateContact({ title: e.target.value })} />
+            </Field>
+            <Field label="本文（改行できます）">
+              <textarea rows={4} className={inputCls} value={contact.message} onChange={(e) => updateContact({ message: e.target.value })} />
+            </Field>
+            <div className="grid gap-4 md:grid-cols-2">
+              <Field label="電話番号">
+                <input className={inputCls} value={contact.phone} onChange={(e) => updateContact({ phone: e.target.value })} />
+              </Field>
+              <Field label="メールアドレス">
+                <input className={inputCls} value={contact.email} onChange={(e) => updateContact({ email: e.target.value })} />
+              </Field>
+              <Field label="微信 / LINE">
+                <input className={inputCls} value={contact.chat} onChange={(e) => updateContact({ chat: e.target.value })} />
+              </Field>
+              <Field label="営業時間">
+                <input className={inputCls} value={contact.hours} onChange={(e) => updateContact({ hours: e.target.value })} />
+              </Field>
+            </div>
+            <Field label="住所">
+              <input className={inputCls} value={contact.address} onChange={(e) => updateContact({ address: e.target.value })} />
+            </Field>
+            <div className="text-xs leading-6 text-[#173E38]/60">※ 電話・メール・微信/LINEは、各ホテルの客房预览ページの「咨询方式栏」にも表示されます。空欄にした項目は、コンタクトページでは非表示になります。</div>
+          </div>
+        </div>
+      )}
+
+      <div className={`mt-6 grid gap-6 md:grid-cols-[300px_1fr] ${tab === 'hotels' ? '' : 'hidden'}`}>
         <div className="rounded-[1.6rem] border border-[#173E38]/10 bg-white p-4">
           <div className="flex gap-2">
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="検索" className={inputCls} />
