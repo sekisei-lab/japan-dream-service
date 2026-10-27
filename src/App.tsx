@@ -30,6 +30,7 @@ type PageKey =
   | 'Hotels'
   | `Area:${string}`
   | `Hotel:${string}`
+  | `Room:${string}`
   | 'Contact'
   | 'MontereyBooking';
 
@@ -47,6 +48,7 @@ type HotelRecord = {
   phone?: string;
   url?: string;
   highlights?: string[];
+  rooms?: { roomType: string; size?: string; occupancy?: string; note?: string }[];
   image: string;
 };
 
@@ -68,6 +70,8 @@ type RoomPlan = {
 };
 
 const NavContext = createContext<(page: PageKey) => void>(() => {});
+
+const roomPage = (hotel: { en: string }): PageKey => (hotel.en === 'HOTEL MONTEREY LA SOEUR OSAKA' ? 'MontereyBooking' : (`Room:${hotel.en}` as PageKey));
 
 const hotelPage = (hotel: { en: string }): PageKey => (hotel.en === 'HOTEL MONTEREY LA SOEUR OSAKA' ? 'MontereyBooking' : (`Hotel:${hotel.en}` as PageKey));
 
@@ -181,15 +185,19 @@ function HotelsGrid({ hotels, onOpenMonterey }: { hotels: HotelRecord[]; onOpenM
                   <span>{hotel.address}</span>
                 </div>
                 {hotel.phone && <div className="mt-1 text-sm text-[#173E38]/62">TEL: {hotel.phone}</div>}
-                <Button
-                  variant={isMonterey ? 'default' : 'outline'}
-                  onClick={isMonterey ? onOpenMonterey : hotel.url ? () => window.open(hotel.url, '_blank', 'noopener') : undefined}
-                  className={`mt-5 w-full rounded-2xl ${
-                    isMonterey ? 'bg-[#173E38] text-white hover:bg-[#143A35]' : 'border-[#173E38]/12 bg-transparent text-[#173E38] hover:bg-[#F7F3E8]'
-                  }`}
-                >
-                  {isMonterey ? '客房预约画面' : hotel.url ? '公式サイト' : '詳細は準備中'} <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+                <div className="mt-5 grid grid-cols-2 gap-3">
+                  <Button
+                    variant="outline"
+                    disabled={!hotel.url}
+                    onClick={() => hotel.url && window.open(hotel.url, '_blank', 'noopener')}
+                    className="rounded-2xl border-[#173E38]/12 bg-transparent text-[#173E38] hover:bg-[#F7F3E8] disabled:opacity-40"
+                  >
+                    公式サイト <ArrowRight className="ml-1 h-4 w-4" />
+                  </Button>
+                  <Button onClick={() => go(roomPage(hotel))} className="rounded-2xl bg-[#173E38] text-white hover:bg-[#143A35]">
+                    客房预览 <ArrowRight className="ml-1 h-4 w-4" />
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </motion.div>
@@ -286,12 +294,154 @@ function HotelDetailPage({ hotel }: { hotel: HotelRecord }) {
                 ))}
               </div>
             )}
-            {hotel.url && (
-              <Button className="mt-8 rounded-2xl bg-[#173E38] px-6 text-white hover:bg-[#143A35]" onClick={() => window.open(hotel.url, '_blank', 'noopener')}>
-                公式サイト <ArrowRight className="ml-2 h-4 w-4" />
+            <div className="mt-8 flex flex-wrap gap-3">
+              {hotel.url && (
+                <Button variant="outline" className="rounded-2xl border-[#173E38]/12 bg-transparent px-6 text-[#173E38] hover:bg-[#F7F3E8]" onClick={() => window.open(hotel.url, '_blank', 'noopener')}>
+                  公式サイト <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              )}
+              <Button className="rounded-2xl bg-[#173E38] px-6 text-white hover:bg-[#143A35]" onClick={() => go(roomPage(hotel))}>
+                客房预览 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-            )}
+            </div>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RoomPreviewPage({ hotel }: { hotel: HotelRecord }) {
+  const go = useContext(NavContext);
+  const rooms = hotel.rooms && hotel.rooms.length > 0 ? hotel.rooms : [{ roomType: '標準客室', size: hotel.size, occupancy: '', note: hotel.note }];
+  const [sel, setSel] = useState(0);
+  const room = rooms[sel] ?? rooms[0];
+  const priceRows: [string, string | undefined][] = [
+    ['料金', hotel.price],
+    ['税費', hotel.tax],
+  ];
+  const guide = [hotel.note, ...(hotel.highlights ?? [])].filter(Boolean) as string[];
+  return (
+    <div className="px-6 py-14 md:px-10">
+      <div className="mx-auto max-w-7xl">
+        <button onClick={() => go(hotelPage(hotel))} className="mb-4 flex items-center gap-1 text-sm text-[#173E38]/70 hover:underline">
+          <ChevronRight className="h-4 w-4 rotate-180" />ホテル詳細へ戻る
+        </button>
+        <div className="overflow-hidden rounded-[2.4rem] border border-[#173E38]/10 bg-white shadow-xl">
+          <div className="grid md:grid-cols-[1.05fr_0.95fr]">
+            <div className="relative min-h-[320px] bg-[#173E38]">
+              <img src={hotel.image} alt={hotel.name} className="h-full w-full object-cover opacity-85" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0f2f2a]/85 via-[#0f2f2a]/20 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+                <div className="text-xs uppercase tracking-[0.22em] text-white/58">Room Preview</div>
+                <h2 className="mt-3 text-3xl font-semibold md:text-4xl">{hotel.name}</h2>
+                <div className="mt-4 flex flex-wrap items-center gap-5 text-sm text-white/82">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />{hotel.cityLabel}
+                  </div>
+                  <Stars count={hotel.stars} />
+                </div>
+              </div>
+            </div>
+            <div className="bg-[#F9F6EE] p-8">
+              <div className="text-xs uppercase tracking-[0.22em] text-[#173E38]/45">Select Room</div>
+              <div className="mt-4 grid gap-3">
+                {rooms.map((r, i) => {
+                  const active = i === sel;
+                  return (
+                    <button
+                      key={r.roomType}
+                      onClick={() => setSel(i)}
+                      className={`flex items-center justify-between rounded-[1.4rem] border px-4 py-4 text-left transition ${
+                        active ? 'border-[#173E38] bg-[#173E38] text-white shadow-lg' : 'border-[#173E38]/10 bg-white text-[#173E38] hover:bg-[#F7F3E8]'
+                      }`}
+                    >
+                      <div>
+                        <div className="text-lg font-semibold">{r.roomType}</div>
+                        <div className={`mt-1 text-sm ${active ? 'text-white/70' : 'text-[#173E38]/58'}`}>
+                          {[r.size, r.occupancy].filter(Boolean).join(' / ') || '—'}
+                        </div>
+                      </div>
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-10 grid gap-8 md:grid-cols-[0.95fr_1.05fr]">
+          <Card className="overflow-hidden rounded-[2rem] border-[#173E38]/10 bg-white shadow-sm">
+            <div className="h-72 overflow-hidden">
+              <img src={hotel.image} alt={room.roomType} className="h-full w-full object-cover" />
+            </div>
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-2xl font-semibold text-[#173E38]">{room.roomType}</div>
+                  <div className="mt-2 flex items-center gap-4 text-sm text-[#173E38]/64">
+                    {room.occupancy && (
+                      <span className="flex items-center gap-2">
+                        <Users className="h-4 w-4" />{room.occupancy}
+                      </span>
+                    )}
+                    {room.size && <span>{room.size}</span>}
+                  </div>
+                </div>
+                <div className="rounded-2xl bg-[#F7F3E8] px-3 py-2 text-xs font-medium text-[#173E38]">Preview</div>
+              </div>
+              {room.note && <p className="mt-5 text-sm leading-7 text-[#173E38]/68">{room.note}</p>}
+            </CardContent>
+          </Card>
+
+          <Card className="rounded-[2rem] border-[#173E38]/10 bg-white shadow-sm">
+            <CardContent className="p-6">
+              <div className="text-xs uppercase tracking-[0.22em] text-[#173E38]/45">Pricing</div>
+              <h3 className="mt-2 text-2xl font-semibold text-[#173E38]">料金・ご案内</h3>
+              <div className="mt-6 grid gap-3">
+                {priceRows
+                  .filter(([, v]) => v)
+                  .map(([k, v]) => (
+                    <div key={k} className="flex items-center justify-between gap-4 rounded-2xl border border-[#173E38]/10 bg-[#FBFAF6] px-4 py-4">
+                      <div className="shrink-0 whitespace-nowrap text-sm font-semibold text-[#173E38]">{k}</div>
+                      <div className="text-right text-base font-semibold text-[#173E38]">{v}</div>
+                    </div>
+                  ))}
+              </div>
+              {guide.length > 0 && (
+                <div className="mt-6 rounded-[1.6rem] border border-[#173E38]/10 bg-[#FBFAF6] p-5">
+                  <div className="text-sm font-semibold text-[#173E38]">ご案内</div>
+                  <ul className="mt-3 grid gap-2 text-sm leading-6 text-[#173E38]/72">
+                    {guide.map((g) => (
+                      <li key={g}>・{g}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <div className="mt-4 rounded-[1.6rem] border border-[#173E38]/10 bg-[#F7F3E8] p-5">
+                <div className="text-sm font-semibold text-[#173E38]">咨询方式栏</div>
+                <div className="mt-4 grid gap-3">
+                  {hotel.phone && (
+                    <div className="flex items-center justify-between rounded-2xl border border-[#173E38]/10 bg-white px-4 py-4">
+                      <div className="text-sm font-medium text-[#173E38]">电话咨询</div>
+                      <div className="text-sm text-[#173E38]/68">{hotel.phone}</div>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between rounded-2xl border border-[#173E38]/10 bg-white px-4 py-4">
+                    <div className="text-sm font-medium text-[#173E38]">邮件咨询</div>
+                    <div className="text-sm text-[#173E38]/68">info@japandreamservice.jp</div>
+                  </div>
+                  {hotel.url && (
+                    <button onClick={() => window.open(hotel.url, '_blank', 'noopener')} className="flex items-center justify-between rounded-2xl border border-[#173E38]/10 bg-white px-4 py-4 text-left hover:bg-[#F7F3E8]">
+                      <div className="text-sm font-medium text-[#173E38]">公式サイト</div>
+                      <ArrowRight className="h-4 w-4 text-[#173E38]/68" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
@@ -709,6 +859,10 @@ export default function JapanDreamServicePrototype() {
   }, [activePage]);
 
   const renderPage = () => {
+    if (activePage.startsWith('Room:')) {
+      const hotel = hotelData.find((h) => h.en === activePage.slice(5));
+      return hotel ? <RoomPreviewPage hotel={hotel} key={hotel.en} /> : <HotelsIndexPage />;
+    }
     if (activePage.startsWith('Hotel:')) {
       const hotel = hotelData.find((h) => h.en === activePage.slice(6));
       return hotel ? <HotelDetailPage hotel={hotel} /> : <HotelsIndexPage />;
