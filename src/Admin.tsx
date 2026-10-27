@@ -25,7 +25,8 @@ type Hotel = {
   rooms?: Room[];
   image: string;
 };
-type Contact = { label: string; title: string; message: string; phone: string; email: string; chat: string; address: string; hours: string };
+type Qr = { label: string; image: string };
+type Contact = { qrs?: Qr[]; label: string; title: string; message: string; phone: string; email: string; chat: string; address: string; hours: string };
 type Pending = { path: string; base64: string; preview: string };
 
 const areas = areasJson as { key: string; label: string; desc: string }[];
@@ -65,14 +66,17 @@ async function gh(token: string, path: string, init?: RequestInit) {
   return res.json();
 }
 
-async function resizeToJpegBase64(file: File, maxW = 1200): Promise<{ base64: string; preview: string }> {
+async function resizeToJpegBase64(file: File, maxW = 1200, mime = 'image/jpeg'): Promise<{ base64: string; preview: string }> {
   const bmp = await createImageBitmap(file);
   const scale = Math.min(1, maxW / bmp.width);
   const canvas = document.createElement('canvas');
   canvas.width = Math.round(bmp.width * scale);
   canvas.height = Math.round(bmp.height * scale);
-  canvas.getContext('2d')!.drawImage(bmp, 0, 0, canvas.width, canvas.height);
-  const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+  const ctx = canvas.getContext('2d')!;
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+  const dataUrl = canvas.toDataURL(mime, 0.85);
   return { base64: dataUrl.split(',')[1], preview: dataUrl };
 }
 
@@ -116,6 +120,9 @@ export default function AdminPage() {
   const fileRef = useRef<HTMLInputElement>(null);
   const roomFileRef = useRef<HTMLInputElement>(null);
   const roomTarget = useRef(0);
+  const qrFileRef = useRef<HTMLInputElement>(null);
+  const qrTarget = useRef(0);
+  const [removedImages, setRemovedImages] = useState<string[]>([]);
 
   const load = async (t: string) => {
     setLoading(true);
@@ -263,6 +270,28 @@ export default function AdminPage() {
     if (path) updateRoom(i, { image: path });
   };
 
+  const qrs = contact?.qrs ?? [];
+  const setQrs = (list: Qr[]) => updateContact({ qrs: list });
+  const dropOldQr = (old: string) => {
+    if (old.startsWith('images/contact/') && !pending.some((p) => p.path === old)) setRemovedImages((r) => [...r, old]);
+  };
+  const onQrFile = async (i: number, f: File | undefined) => {
+    if (!f) return;
+    if (!f.type.startsWith('image/')) {
+      setMsg({ kind: 'err', text: '画像ファイル（JPG / PNG など）を選んでください。' });
+      return;
+    }
+    try {
+      const { base64, preview } = await resizeToJpegBase64(f, 800, 'image/png');
+      const path = `images/contact/qr-${Date.now()}.png`;
+      setPending((p) => [...p, { path, base64, preview }]);
+      dropOldQr(qrs[i]?.image ?? '');
+      setQrs(qrs.map((q, idx) => (idx === i ? { ...q, image: path } : q)));
+    } catch {
+      setMsg({ kind: 'err', text: '画像を読み込めませんでした。別の画像でお試しください。' });
+    }
+  };
+
   const previewOf = (img: string) => pending.find((p) => p.path === img)?.preview ?? img;
 
   const save = async () => {
@@ -281,6 +310,13 @@ export default function AdminPage() {
     setMsg(null);
     try {
       if (contactDirty && contact) {
+        const usedQr = new Set((contact.qrs ?? []).map((q) => q.image));
+        for (const p of pending.filter((x) => usedQr.has(x.path))) {
+          await gh(token, `/repos/${REPO}/contents/public/${p.path}`, {
+            method: 'PUT',
+            body: JSON.stringify({ message: `Add image ${p.path}`, content: p.base64, branch: BRANCH }),
+          });
+        }
         const cr = await gh(token, `/repos/${REPO}/contents/${CONTACT_PATH}`, {
           method: 'PUT',
           body: JSON.stringify({
@@ -292,6 +328,18 @@ export default function AdminPage() {
         });
         setContactSha(cr.content.sha);
         setContactDirty(false);
+        for (const path of removedImages) {
+          try {
+            const f = await gh(token, `/repos/${REPO}/contents/public/${path}?ref=${BRANCH}`);
+            await gh(token, `/repos/${REPO}/contents/public/${path}`, {
+              method: 'DELETE',
+              body: JSON.stringify({ message: `Remove image ${path}`, sha: f.sha, branch: BRANCH }),
+            });
+          } catch {
+            /* ignore: file may already be gone */
+          }
+        }
+        setRemovedImages([]);
       }
       if (!dirty) {
         setMsg({ kind: 'ok', text: '保存しました。1〜3分ほどでサイトに反映されます。' });
@@ -422,6 +470,49 @@ export default function AdminPage() {
             <Field label="住所">
               <input className={inputCls} value={contact.address} onChange={(e) => updateContact({ address: e.target.value })} />
             </Field>
+            <div>
+              <div className="flex items-center justify-between">
+                <span className={labelCls}>QRコード・画像（微信 / LINE など）</span>
+                <button onClick={() => setQrs([...qrs, { label: '', image: '' }])} className="rounded-lg border border-[#173E38]/15 px-3 py-1 text-xs text-[#173E38] hover:bg-[#F7F3E8]">＋画像を追加</button>
+              </div>
+              <input ref={qrFileRef} type="file" accept="image/*" className="hidden" onChange={(e) => {
+                onQrFile(qrTarget.current, e.target.files?.[0]);
+                e.target.value = '';
+              }} />
+              <div className="mt-2 grid gap-3 md:grid-cols-2">
+                {qrs.map((q, i) => (
+                  <div key={i} className="rounded-xl border border-[#173E38]/10 bg-[#FBFAF6] p-3">
+                    <div
+                      onClick={() => {
+                        qrTarget.current = i;
+                        qrFileRef.current?.click();
+                      }}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        onQrFile(i, e.dataTransfer.files[0]);
+                      }}
+                      className="flex h-40 cursor-pointer items-center justify-center overflow-hidden rounded-lg border-2 border-dashed border-[#173E38]/20 bg-white text-xs text-[#173E38]/50"
+                    >
+                      {q.image ? <img src={previewOf(q.image)} alt="" className="h-full w-full object-contain" /> : 'クリックまたはドロップして画像を選択'}
+                    </div>
+                    <div className="mt-2 flex gap-2">
+                      <input className={inputCls} placeholder="ラベル（例：微信）" value={q.label} onChange={(e) => setQrs(qrs.map((x, idx) => (idx === i ? { ...x, label: e.target.value } : x)))} />
+                      <button
+                        onClick={() => {
+                          dropOldQr(q.image);
+                          setQrs(qrs.filter((_, idx) => idx !== i));
+                        }}
+                        className="shrink-0 rounded-lg px-3 text-sm text-red-600 hover:bg-red-50"
+                      >
+                        削除
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {qrs.length === 0 && <div className="text-xs text-[#173E38]/55">画像はまだありません。「＋画像を追加」を押してください。</div>}
+              </div>
+            </div>
             <div className="text-xs leading-6 text-[#173E38]/60">※ 電話・メール・微信/LINEは、各ホテルの客房预览ページの「咨询方式栏」にも表示されます。空欄にした項目は、コンタクトページでは非表示になります。</div>
           </div>
         </div>
