@@ -7,5 +7,10 @@
   "chat": "可在正式版中接入",
   "address": "",
   "hours": "",
-  "qrs": []
+  "qrs": [
+    {
+      "label": "",
+      "image": "images/contact/qr-1793088482180.png"
+    }
+  ]
 }
