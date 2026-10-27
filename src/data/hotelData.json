@@ -609,13 +609,16 @@
     "stars": 5,
     "size": "55",
     "price": "お問い合わせ",
-    "tax": "",
-    "note": "2222222",
-    "address": "22222",
+    "tax": "込",
+    "note": "6666666666666車、自転車、路線バス、ヘリコプター",
+    "address": "22222SDSdsdsdsdsds",
     "phone": "2222",
-    "url": "22222222222222",
+    "url": "https XXXXXXXXXXX",
     "highlights": [
-      "2222222"
+      "第一行AAAAAAAAAAAAA",
+      "第二行BBBBBBBBBBBBBB",
+      "第三行CCCCCCCCCCCCCCC",
+      "第四行DDDDDDDDDDDDD"
     ],
     "rooms": [
       {
