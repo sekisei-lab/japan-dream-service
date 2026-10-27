@@ -600,5 +600,32 @@
     "image": "https://images.unsplash.com/photo-1521783988139-89397d761dce?q=80&w=1200",
     "highlights": [],
     "rooms": []
+  },
+  {
+    "city": "Tokyo",
+    "cityLabel": "東京",
+    "name": "東京TEST Hotel",
+    "en": "New Tokyo test Hotel",
+    "stars": 5,
+    "size": "55",
+    "price": "お問い合わせ",
+    "tax": "",
+    "note": "2222222",
+    "address": "22222",
+    "phone": "2222",
+    "url": "22222222222222",
+    "highlights": [
+      "2222222"
+    ],
+    "rooms": [
+      {
+        "roomType": "トリプル",
+        "size": "20",
+        "occupancy": "3",
+        "note": "3张床你还要自行车？",
+        "image": "images/hotels/new-tokyo-test-hotel-room1-1793086816927.jpg"
+      }
+    ],
+    "image": "images/hotels/new-tokyo-test-hotel-1793086766352.jpg"
   }
 ]
