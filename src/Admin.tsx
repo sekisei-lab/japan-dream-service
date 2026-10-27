@@ -6,7 +6,7 @@ const BRANCH = 'main';
 const DATA_PATH = 'src/data/hotelData.json';
 const TOKEN_KEY = 'jds_admin_token';
 
-type Room = { roomType: string; size?: string; occupancy?: string; note?: string };
+type Room = { roomType: string; size?: string; occupancy?: string; note?: string; image?: string };
 type Hotel = {
   city: string;
   cityLabel: string;
@@ -108,6 +108,8 @@ export default function AdminPage() {
   const [pending, setPending] = useState<Pending[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const roomFileRef = useRef<HTMLInputElement>(null);
+  const roomTarget = useRef(0);
 
   const load = async (t: string) => {
     setLoading(true);
@@ -219,21 +221,31 @@ export default function AdminPage() {
     setDirty(true);
   };
 
-  const onFiles = async (files: FileList | null) => {
-    const f = files?.[0];
-    if (!f || !hotel) return;
+  const makeImage = async (f: File | undefined, prefix: string): Promise<string | null> => {
+    if (!f || !hotel) return null;
     if (!f.type.startsWith('image/')) {
       setMsg({ kind: 'err', text: '画像ファイル（JPG / PNG など）を選んでください。' });
-      return;
+      return null;
     }
     try {
       const { base64, preview } = await resizeToJpegBase64(f);
-      const path = `images/hotels/${slug(hotel.en)}-${Date.now()}.jpg`;
+      const path = `images/hotels/${slug(hotel.en)}${prefix}-${Date.now()}.jpg`;
       setPending((p) => [...p, { path, base64, preview }]);
-      update({ image: path });
+      return path;
     } catch {
       setMsg({ kind: 'err', text: '画像を読み込めませんでした。別の画像でお試しください。' });
+      return null;
     }
+  };
+
+  const onFiles = async (files: FileList | null) => {
+    const path = await makeImage(files?.[0], '');
+    if (path) update({ image: path });
+  };
+
+  const onRoomFile = async (i: number, file: File | undefined) => {
+    const path = await makeImage(file, `-room${i + 1}`);
+    if (path) updateRoom(i, { image: path });
   };
 
   const previewOf = (img: string) => pending.find((p) => p.path === img)?.preview ?? img;
@@ -252,7 +264,7 @@ export default function AdminPage() {
     setSaving(true);
     setMsg(null);
     try {
-      const used = new Set(hotels.map((h) => h.image));
+      const used = new Set(hotels.flatMap((h) => [h.image, ...(h.rooms ?? []).map((r) => r.image ?? '')]));
       for (const p of pending.filter((x) => used.has(x.path))) {
         await gh(token, `/repos/${REPO}/contents/public/${p.path}`, {
           method: 'PUT',
@@ -452,12 +464,31 @@ export default function AdminPage() {
 
             <div className="mt-6">
               <div className="flex items-center justify-between">
-                <span className={labelCls}>客室タイプ（客房预览ページの選択肢）</span>
+                <span className={labelCls}>客室タイプ（客房预览ページの選択肢・客室ごとの写真）</span>
                 <button onClick={() => update({ rooms: [...(hotel.rooms ?? []), { roomType: '', size: '', occupancy: '', note: '' }] })} className="rounded-lg border border-[#173E38]/15 px-3 py-1 text-xs text-[#173E38] hover:bg-[#F7F3E8]">＋客室を追加</button>
               </div>
+              <input ref={roomFileRef} type="file" accept="image/*" className="hidden" onChange={(e) => {
+                onRoomFile(roomTarget.current, e.target.files?.[0]);
+                e.target.value = '';
+              }} />
               <div className="mt-2 grid gap-3">
                 {(hotel.rooms ?? []).map((r, i) => (
-                  <div key={i} className="grid gap-2 rounded-xl border border-[#173E38]/10 bg-[#FBFAF6] p-3 md:grid-cols-[1.2fr_1fr_0.8fr_2fr_auto]">
+                  <div key={i} className="grid items-center gap-2 rounded-xl border border-[#173E38]/10 bg-[#FBFAF6] p-3 md:grid-cols-[88px_1.2fr_1fr_0.8fr_2fr_auto]">
+                    <div
+                      onClick={() => {
+                        roomTarget.current = i;
+                        roomFileRef.current?.click();
+                      }}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        onRoomFile(i, e.dataTransfer.files[0]);
+                      }}
+                      title="客室の写真（クリックまたはドロップ）"
+                      className="flex h-16 w-[88px] cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed border-[#173E38]/25 bg-white text-center text-[11px] leading-4 text-[#173E38]/50"
+                    >
+                      {r.image ? <img src={previewOf(r.image)} alt="" className="h-full w-full object-cover" /> : '写真を追加'}
+                    </div>
                     <input className={inputCls} placeholder="タイプ名" value={r.roomType} onChange={(e) => updateRoom(i, { roomType: e.target.value })} />
                     <input className={inputCls} placeholder="面積" value={r.size ?? ''} onChange={(e) => updateRoom(i, { size: e.target.value })} />
                     <input className={inputCls} placeholder="人数" value={r.occupancy ?? ''} onChange={(e) => updateRoom(i, { occupancy: e.target.value })} />

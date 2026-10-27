@@ -50,7 +50,7 @@ type HotelRecord = {
   phone?: string;
   url?: string;
   highlights?: string[];
-  rooms?: { roomType: string; size?: string; occupancy?: string; note?: string }[];
+  rooms?: { roomType: string; size?: string; occupancy?: string; note?: string; image?: string }[];
   image: string;
 };
 
@@ -376,7 +376,11 @@ function RoomPreviewPage({ hotel }: { hotel: HotelRecord }) {
         <div className="mt-10 grid gap-8 md:grid-cols-[0.95fr_1.05fr]">
           <Card className="overflow-hidden rounded-[2rem] border-[#173E38]/10 bg-white shadow-sm">
             <div className="h-72 overflow-hidden">
-              <img src={hotel.image} alt={room.roomType} className="h-full w-full object-cover" />
+              {room.image ? (
+                <img key={room.image} src={room.image} alt={room.roomType} className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-[#F7F3E8] text-sm text-[#173E38]/45">客室の写真は準備中です</div>
+              )}
             </div>
             <CardContent className="p-6">
               <div className="flex items-start justify-between gap-4">
