@@ -15,6 +15,8 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import hotelDataJson from '@/data/hotelData.json';
+import montereyRoomsJson from '@/data/montereyRooms.json';
 
 type CityKey = 'All' | 'Osaka' | 'Kyoto' | 'Tokyo';
 type PageKey =
@@ -68,148 +70,9 @@ const colors = {
   cream: '#F6F2E8',
 };
 
-const hotelData: HotelRecord[] = [
-  {
-    city: 'Osaka',
-    cityLabel: '大阪',
-    name: 'くれたけイン南海堺駅前',
-    en: 'KURETAKE INN NANKAI SAKAI STATION',
-    stars: 3,
-    size: '14㎡',
-    price: '6,500–7,000円',
-    tax: '宿泊税 200円',
-    note: '大浴場あり / 堺駅 徒歩2分',
-    address: '大阪府堺市堺区栄橋町1丁3-12',
-    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200',
-  },
-  {
-    city: 'Osaka',
-    cityLabel: '大阪',
-    name: 'ノク大阪',
-    en: 'NOKU OSAKA',
-    stars: 3,
-    size: '20㎡',
-    price: '8,500円〜',
-    tax: '宿泊税 200円',
-    note: '天満エリア / 価格帯が明確',
-    address: '大阪市北区天満2丁目10-13',
-    image: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1200',
-  },
-  {
-    city: 'Osaka',
-    cityLabel: '大阪',
-    name: 'ホテル アゴーラ 大阪守口',
-    en: 'HOTEL AGORA OSAKA MORIGUCHI',
-    stars: 4,
-    size: '21㎡',
-    price: '7,500円〜 / 土曜 9,500円〜',
-    tax: '宿泊税 200円',
-    note: '守口エリア / 团队住宿可用',
-    address: '大阪府守口市河原町10-5',
-    image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1200',
-  },
-  {
-    city: 'Osaka',
-    cityLabel: '大阪',
-    name: 'ホテルモントレ ラ・スール大阪',
-    en: 'HOTEL MONTEREY LA SOEUR OSAKA',
-    stars: 4,
-    size: '16㎡ / 20㎡ / 22㎡ / 26㎡',
-    price: '10,500円〜 26,500円',
-    tax: '宿泊税別',
-    note: '京橋駅 徒歩約5分 / 温泉・朝食付きプランあり',
-    address: '大阪府大阪市中央区城見2丁目2-22',
-    image: 'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=1200',
-  },
-  {
-    city: 'Kyoto',
-    cityLabel: '京都',
-    name: 'hotel MONday 京都烏丸二条',
-    en: 'hotel MONday Kyoto Karasuma Nijo',
-    stars: 3,
-    size: '标准双床',
-    price: '8,000円〜',
-    tax: '按政策',
-    note: '烏丸通沿线 / 和现代设计',
-    address: '京都府京都市中京区烏丸通二条上る蒔絵屋町261-1',
-    image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1200',
-  },
-  {
-    city: 'Kyoto',
-    cityLabel: '京都',
-    name: '京乃宿 清水五条 呉竹荘',
-    en: 'Kyoto Inn Kiyomizu Gojo Kuretakeso',
-    stars: 3,
-    size: '15–18㎡',
-    price: '7,000円〜',
-    tax: '土曜祝日 +1,000円',
-    note: '清水五条 / 房型可灵活安排',
-    address: '京都府京都市東山区芳野町79-2',
-    image: 'https://images.unsplash.com/photo-1521783988139-89397d761dce?q=80&w=1200',
-  },
-  {
-    city: 'Tokyo',
-    cityLabel: '東京',
-    name: 'hotel MONday Premium TOYOSU',
-    en: 'hotel MONday Premium TOYOSU',
-    stars: 4,
-    size: '18㎡',
-    price: '中高端',
-    tax: '按政策',
-    note: '豊洲区域 / 团队与家庭皆适合',
-    address: '東京都江東区東雲1丁目2-11',
-    image: 'https://images.unsplash.com/photo-1551918120-9739cb430c6d?q=80&w=1200',
-  },
-  {
-    city: 'Tokyo',
-    cityLabel: '東京',
-    name: 'ベッセルイン浅草',
-    en: 'Vessel Inn Asakusa',
-    stars: 4,
-    size: '多房型',
-    price: '浅草观光区域',
-    tax: '按政策',
-    note: '观光适配度高',
-    address: '東京都台東区千束1丁目15-1',
-    image: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?q=80&w=1200',
-  },
-];
+const hotelData = hotelDataJson as HotelRecord[];
 
-const montereyRooms: RoomPlan[] = [
-  {
-    id: 'single',
-    roomType: 'シングル',
-    size: '16㎡',
-    occupancy: '1名',
-    image: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?q=80&w=1200',
-    stock: 8,
-    reserved: 3,
-    prices: { A: '16,500円', B: '20,000円', C: '22,500円', D: '26,500円' },
-    note: '温泉・朝食付きプランを想定',
-  },
-  {
-    id: 'hollywood-twin',
-    roomType: 'ハリウッドツイン',
-    size: '20㎡',
-    occupancy: '2名',
-    image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?q=80&w=1200',
-    stock: 12,
-    reserved: 5,
-    prices: { A: '10,500円', B: '12,500円', C: '14,500円', D: '18,500円' },
-    note: '京橋駅徒歩約5分、朝食付き',
-  },
-  {
-    id: 'twin',
-    roomType: 'ツイン',
-    size: '22㎡',
-    occupancy: '2名',
-    image: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?q=80&w=1200',
-    stock: 10,
-    reserved: 4,
-    prices: { A: '11,500円', B: '13,500円', C: '15,500円', D: '19,500円' },
-    note: 'スタンダードな予約画面サンプル',
-  },
-];
+const montereyRooms = montereyRoomsJson as RoomPlan[];
 
 const cityMeta: Record<CityKey, { label: string; desc: string; accent: string }> = {
   All: {

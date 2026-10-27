@@ -1,0 +1,50 @@
+[
+  {
+    "id": "single",
+    "roomType": "シングル",
+    "size": "16㎡",
+    "occupancy": "1名",
+    "image": "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?q=80&w=1200",
+    "stock": 8,
+    "reserved": 3,
+    "prices": {
+      "A": "16,500円",
+      "B": "20,000円",
+      "C": "22,500円",
+      "D": "26,500円"
+    },
+    "note": "温泉・朝食付きプランを想定"
+  },
+  {
+    "id": "hollywood-twin",
+    "roomType": "ハリウッドツイン",
+    "size": "20㎡",
+    "occupancy": "2名",
+    "image": "https://images.unsplash.com/photo-1590490360182-c33d57733427?q=80&w=1200",
+    "stock": 12,
+    "reserved": 5,
+    "prices": {
+      "A": "10,500円",
+      "B": "12,500円",
+      "C": "14,500円",
+      "D": "18,500円"
+    },
+    "note": "京橋駅徒歩約5分、朝食付き"
+  },
+  {
+    "id": "twin",
+    "roomType": "ツイン",
+    "size": "22㎡",
+    "occupancy": "2名",
+    "image": "https://images.unsplash.com/photo-1566665797739-1674de7a421a?q=80&w=1200",
+    "stock": 10,
+    "reserved": 4,
+    "prices": {
+      "A": "11,500円",
+      "B": "13,500円",
+      "C": "15,500円",
+      "D": "19,500円"
+    },
+    "note": "スタンダードな予約画面サンプル"
+  }
+]
