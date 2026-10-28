@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import QRCode from 'qrcode';
 import areasJson from '@/data/areas.json';
 
 const REPO = 'sekisei-lab/japan-dream-service';
@@ -97,11 +98,20 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 export default function AdminPage() {
   const [token, setToken] = useState<string>(() => {
     try {
+      // QRコードから引き継がれたトークン（#Admin?t=...）
+      const m = window.location.hash.match(/[?&]t=([^&]+)/);
+      if (m) {
+        const t = decodeURIComponent(m[1]);
+        localStorage.setItem(TOKEN_KEY, t);
+        window.history.replaceState(null, '', `${window.location.pathname}#Admin`);
+        return t;
+      }
       return localStorage.getItem(TOKEN_KEY) ?? '';
     } catch {
       return '';
     }
   });
+  const [qrUrl, setQrUrl] = useState('');
   const [tokenInput, setTokenInput] = useState('');
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [sha, setSha] = useState('');
@@ -383,6 +393,12 @@ export default function AdminPage() {
     }
   };
 
+  const showHandoffQr = async () => {
+    const url = `${window.location.origin}${window.location.pathname}#Admin?t=${encodeURIComponent(token)}`;
+    setQrUrl(await QRCode.toDataURL(url, { width: 360, margin: 2, errorCorrectionLevel: 'L' }));
+    window.setTimeout(() => setQrUrl(''), 90000);
+  };
+
   const goHome = () => {
     window.location.hash = '';
     window.location.reload();
@@ -440,6 +456,17 @@ export default function AdminPage() {
         </div>
       </div>
       {msg && <div className={`mt-4 rounded-xl p-3 text-sm ${msg.kind === 'ok' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-700'}`}>{msg.text}</div>}
+      {qrUrl && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6" onClick={() => setQrUrl('')}>
+          <div className="w-full max-w-sm rounded-[1.6rem] bg-white p-6 text-center text-[#173E38]" onClick={(e) => e.stopPropagation()}>
+            <div className="text-lg font-semibold">他の端末に引き継ぐ</div>
+            <p className="mt-2 text-xs leading-6 text-[#173E38]/70">スマホなど、引き継ぎ先のカメラでこのQRコードを読み取ると、管理画面にそのまま入れます。</p>
+            <img src={qrUrl} alt="引き継ぎ用QRコード" className="mx-auto mt-4 w-full max-w-[300px]" />
+            <p className="mt-3 text-xs leading-6 text-[#C2410C]">このQRコードにはトークン（鍵）が入っています。他の人に見せたり、撮影されたりしないでください。90秒で自動的に閉じます。</p>
+            <button onClick={() => setQrUrl('')} className="mt-4 rounded-xl bg-[#173E38] px-6 py-2 text-sm text-white hover:bg-[#143A35]">閉じる</button>
+          </div>
+        </div>
+      )}
       {(dirty || contactDirty) && <div className="mt-3 text-xs text-[#C2410C]">未保存の変更があります。</div>}
 
       <div className="mt-6 flex gap-2">
@@ -690,7 +717,10 @@ export default function AdminPage() {
         )}
       </div>
       <div className="mt-8 flex items-end justify-between">
-        <button onClick={goHome} className="text-sm text-[#173E38]/60 underline">サイトに戻る</button>
+        <div className="flex items-end gap-5">
+          <button onClick={goHome} className="text-sm text-[#173E38]/60 underline">サイトに戻る</button>
+          <button onClick={showHandoffQr} className="text-sm text-[#173E38]/60 underline">他の端末に引き継ぐ（QR）</button>
+        </div>
         <button
           onClick={() => {
             if (confirm('保存済みのトークンをこのブラウザから削除します。再度使うには、トークンの入力が必要です。よろしいですか？')) logout();

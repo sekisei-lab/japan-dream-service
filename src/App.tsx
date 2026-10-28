@@ -855,11 +855,11 @@ function HomeOrHotelsPage({
 
 export default function JapanDreamServicePrototype() {
   const hotelPreviewRef = useRef<HTMLElement>(null);
-  const [showSplash, setShowSplash] = useState(() => window.location.hash !== '#Admin');
+  const [showSplash, setShowSplash] = useState(() => !window.location.hash.startsWith('#Admin'));
   const [activeCity, setActiveCity] = useState<CityKey>('All');
   const readHash = (): PageKey => {
     try {
-      const h = decodeURIComponent(window.location.hash.replace(/^#/, ''));
+      const h = decodeURIComponent(window.location.hash.replace(/^#/, '').split('?')[0]);
       return (h || 'Home') as PageKey;
     } catch {
       return 'Home';
