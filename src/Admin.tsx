@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import QRCode from 'qrcode';
+import jsQR from 'jsqr';
 import areasJson from '@/data/areas.json';
 
 const REPO = 'sekisei-lab/japan-dream-service';
@@ -393,6 +394,59 @@ export default function AdminPage() {
     }
   };
 
+  // 初回登録：カメラでQRコードを読み取ってトークンを受け取る
+  const [scanning, setScanning] = useState(false);
+  const [scanErr, setScanErr] = useState('');
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (!scanning) return;
+    let stream: MediaStream | null = null;
+    let timer = 0;
+    let stopped = false;
+    (async () => {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        if (stopped) {
+          stream.getTracks().forEach((t) => t.stop());
+          return;
+        }
+        const v = videoRef.current!;
+        v.srcObject = stream;
+        await v.play();
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+        timer = window.setInterval(() => {
+          if (!v.videoWidth) return;
+          canvas.width = v.videoWidth;
+          canvas.height = v.videoHeight;
+          ctx.drawImage(v, 0, 0);
+          const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const code = jsQR(img.data, img.width, img.height);
+          if (!code) return;
+          const m = code.data.match(/[?&]t=([^&#]+)/);
+          const t = m ? decodeURIComponent(m[1]) : code.data.startsWith('github_pat_') ? code.data : '';
+          if (!t) return;
+          try {
+            localStorage.setItem(TOKEN_KEY, t);
+          } catch {
+            /* ignore */
+          }
+          setScanning(false);
+          setToken(t);
+        }, 250);
+      } catch {
+        setScanErr('カメラを使えませんでした。ブラウザのカメラの許可を確認してください。（カメラのないPCでは、トークンを貼り付けてください）');
+        setScanning(false);
+      }
+    })();
+    return () => {
+      stopped = true;
+      window.clearInterval(timer);
+      stream?.getTracks().forEach((t) => t.stop());
+    };
+  }, [scanning]);
+
   const showHandoffQr = async () => {
     const url = `${window.location.origin}${window.location.pathname}#Admin?t=${encodeURIComponent(token)}`;
     setQrUrl(await QRCode.toDataURL(url, { width: 360, margin: 2, errorCorrectionLevel: 'L' }));
@@ -427,6 +481,21 @@ export default function AdminPage() {
           <input type="password" value={tokenInput} onChange={(e) => setTokenInput(e.target.value)} placeholder="github_pat_..." className={inputCls} />
           <button onClick={connect} className="shrink-0 rounded-xl bg-[#173E38] px-5 py-2 text-sm text-white hover:bg-[#143A35]">接続</button>
         </div>
+        <div className="mt-4 rounded-[1.6rem] border border-[#173E38]/10 bg-white p-5 text-sm text-[#173E38]/80">
+          <div className="font-semibold text-[#173E38]">すでに管理画面に入れる端末がある場合（QRコードで接続）</div>
+          <p className="mt-2 text-xs leading-6">その端末の管理画面の一番下にある「他の端末に引き継ぐ（QR）」を押してQRコードを表示し、下のボタンを押してカメラにかざしてください。</p>
+          <button onClick={() => { setScanErr(''); setScanning(true); }} className="mt-3 rounded-xl bg-[#173E38] px-5 py-2 text-sm text-white hover:bg-[#143A35]">QRコードを読み取る（カメラ）</button>
+          {scanErr && <div className="mt-3 rounded-xl bg-red-50 p-3 text-xs leading-6 text-red-700">{scanErr}</div>}
+        </div>
+        {scanning && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6">
+            <div className="w-full max-w-md rounded-[1.6rem] bg-white p-5 text-center text-[#173E38]">
+              <div className="text-base font-semibold">QRコードをカメラにかざしてください</div>
+              <video ref={videoRef} muted playsInline className="mt-3 w-full rounded-xl bg-black" />
+              <button onClick={() => setScanning(false)} className="mt-4 rounded-xl border border-[#173E38]/20 px-6 py-2 text-sm hover:bg-[#F7F3E8]">キャンセル</button>
+            </div>
+          </div>
+        )}
         {msg && <div className={`mt-4 rounded-xl p-3 text-sm ${msg.kind === 'ok' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-700'}`}>{msg.text}</div>}
         <button onClick={goHome} className="mt-6 text-sm text-[#173E38]/60 underline">サイトに戻る</button>
       </div>
