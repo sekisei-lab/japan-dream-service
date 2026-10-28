@@ -855,7 +855,14 @@ function HomeOrHotelsPage({
 
 export default function JapanDreamServicePrototype() {
   const hotelPreviewRef = useRef<HTMLElement>(null);
-  const [showSplash, setShowSplash] = useState(() => !window.location.hash.startsWith('#Admin'));
+  const [showSplash, setShowSplash] = useState(() => {
+    try {
+      // 管理画面・個別ページのURL・同じ閲覧中の2回目以降は、オープニングを省略
+      return !window.location.hash.replace('#', '') && !sessionStorage.getItem('jds_splash');
+    } catch {
+      return true;
+    }
+  });
   const [activeCity, setActiveCity] = useState<CityKey>('All');
   const readHash = (): PageKey => {
     try {
@@ -875,9 +882,18 @@ export default function JapanDreamServicePrototype() {
   const [query, setQuery] = useState('');
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setShowSplash(false), 3000);
+    const timer = window.setTimeout(() => setShowSplash(false), 1600);
     return () => window.clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (showSplash) return;
+    try {
+      sessionStorage.setItem('jds_splash', '1');
+    } catch {
+      /* ignore */
+    }
+  }, [showSplash]);
 
   const filteredHotels = useMemo(() => {
     return hotelData.filter((hotel) => {
@@ -974,7 +990,8 @@ export default function JapanDreamServicePrototype() {
             className="fixed inset-0 z-50 overflow-hidden"
             style={{ background: `radial-gradient(circle at 50% 20%, ${colors.green2} 0%, ${colors.bg} 65%)` }}
             initial={{ opacity: 1 }}
-            exit={{ opacity: 0, scale: 1.02, transition: { duration: 2.2 } }}
+            exit={{ opacity: 0, scale: 1.02, transition: { duration: 0.7 } }}
+            onClick={() => setShowSplash(false)}
           >
             <motion.div
               className="absolute inset-0"
@@ -991,7 +1008,7 @@ export default function JapanDreamServicePrototype() {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.6, y: 22 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ duration: 1.9, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
                   className="relative mx-auto w-fit"
                 >
                   <div className="absolute inset-0 rounded-full bg-[#E7D8A8]/18 blur-3xl" />
@@ -1000,7 +1017,7 @@ export default function JapanDreamServicePrototype() {
                 <motion.h1
                   initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7, duration: 1.4 }}
+                  transition={{ delay: 0.3, duration: 0.7 }}
                   className="mt-3 text-3xl font-semibold tracking-wide text-[#F8F4E2] md:text-5xl"
                   style={{ fontFamily: 'Georgia, serif' }}
                 >
