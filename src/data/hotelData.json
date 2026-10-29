@@ -609,7 +609,8 @@
     "url": "https://chi-hotelsresorts.com/",
     "image": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1200",
     "highlights": [],
-    "rooms": []
+    "rooms": [],
+    "featured": true
   },
   {
     "city": "pref-34",
