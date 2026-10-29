@@ -22,7 +22,7 @@ import { Input } from '@/components/ui/input';
 import hotelDataJson from '@/data/hotelData.json';
 import montereyRoomsJson from '@/data/montereyRooms.json';
 import areasJson from '@/data/areas.json';
-import { buildAreas, type Area } from './prefectures';
+import { buildAreas, subArea, type Area } from './prefectures';
 import montereyInfoJson from '@/data/montereyInfo.json';
 import AdminPage from './Admin';
 import contactJson from '@/data/contact.json';
@@ -55,6 +55,7 @@ type HotelRecord = {
   address: string;
   phone?: string;
   url?: string;
+  sub?: string;
   highlights?: string[];
   rooms?: { roomType: string; size?: string; occupancy?: string; note?: string; image?: string }[];
   image: string;
@@ -162,7 +163,7 @@ function HotelsGrid({ hotels, onOpenMonterey }: { hotels: HotelRecord[]; onOpenM
           >
             <Card className="h-full overflow-hidden rounded-[2rem] border-[#173E38]/10 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
               <div className="p-4">
-                <HotelPreviewVisual city={hotel.city} name={hotel.name} image={hotel.image} />
+                <HotelPreviewVisual city={subArea(hotel)} name={hotel.name} image={hotel.image} />
               </div>
               <CardContent className="px-5 pb-5 pt-0">
                 <div className="flex items-start justify-between gap-4">

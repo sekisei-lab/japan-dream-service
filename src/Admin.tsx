@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import QRCode from 'qrcode';
 import jsQR from 'jsqr';
 import areasJson from '@/data/areas.json';
-import { PREF_GROUPS, prefKey, prefectures } from './prefectures';
+import { PREF_GROUPS, prefKey, prefectures, subArea } from './prefectures';
 
 const REPO = 'sekisei-lab/japan-dream-service';
 const BRANCH = 'main';
@@ -24,6 +24,7 @@ type Hotel = {
   address: string;
   phone?: string;
   url?: string;
+  sub?: string;
   highlights?: string[];
   rooms?: Room[];
   image: string;
@@ -711,6 +712,16 @@ export default function AdminPage() {
               <div className="md:col-span-2">
                 <Field label="住所">
                   <input className={inputCls} value={hotel.address} onChange={(e) => update({ address: e.target.value })} />
+                </Field>
+              </div>
+              <div className="md:col-span-2">
+                <Field label="サブ情報（ホテルカードの写真の左上に表示。空欄なら住所から自動）">
+                  <input
+                    className={inputCls}
+                    value={hotel.sub ?? ''}
+                    placeholder={subArea({ ...hotel, sub: undefined })}
+                    onChange={(e) => update({ sub: e.target.value })}
+                  />
                 </Field>
               </div>
               <div className="md:col-span-2">
