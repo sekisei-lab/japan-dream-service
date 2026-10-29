@@ -1083,16 +1083,9 @@ export default function JapanDreamServicePrototype() {
                       <button onClick={() => goPage('ServiceGroup')} className="w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-[#F7F3E8]">Group Support</button>
                     </div>
                   </div>
-                  <div className="group relative">
-                    <button onClick={goHotelsPreview} className={`flex items-center gap-1 rounded-2xl px-4 py-2 text-sm transition ${activePage === 'Hotels' ? 'bg-[#173E38] text-white shadow' : 'text-[#173E38]/72 hover:bg-white hover:text-[#173E38]'}`}>
-                      Hotels <ChevronDown className="h-4 w-4" />
-                    </button>
-                    <div className="invisible absolute left-0 top-12 z-20 max-h-[70vh] w-56 overflow-y-auto rounded-2xl border border-[#173E38]/10 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:opacity-100">
-                      {areas.map((a) => (
-                        <button key={a.key} onClick={() => goPage(`Area:${a.key}` as PageKey)} className="w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-[#F7F3E8]">{a.label}</button>
-                      ))}
-                    </div>
-                  </div>
+                  <button onClick={goHotelsPreview} className={`rounded-2xl px-4 py-2 text-sm transition ${activePage === 'Hotels' || activePage.startsWith('Area:') ? 'bg-[#173E38] text-white shadow' : 'text-[#173E38]/72 hover:bg-white hover:text-[#173E38]'}`}>
+                    Hotels
+                  </button>
                   <button onClick={() => goPage('Contact')} className={`rounded-2xl px-4 py-2 text-sm transition ${activePage === 'Contact' ? 'bg-[#173E38] text-white shadow' : 'text-[#173E38]/72 hover:bg-white hover:text-[#173E38]'}`}>
                     Contact
                   </button>
