@@ -173,7 +173,7 @@
       "トリプルルームあり"
     ],
     "rooms": [],
-    "featured": true
+    "featured": false
   },
   {
     "city": "pref-28",
@@ -190,7 +190,8 @@
     "url": "https://hotel-fruitflower.jp/",
     "image": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1200",
     "highlights": [],
-    "rooms": []
+    "rooms": [],
+    "featured": false
   },
   {
     "city": "pref-26",
@@ -211,7 +212,7 @@
       "市区动线便利"
     ],
     "rooms": [],
-    "featured": true
+    "featured": false
   },
   {
     "city": "pref-26",
@@ -486,7 +487,7 @@
       "家庭与团队入住推荐"
     ],
     "rooms": [],
-    "featured": true
+    "featured": false
   },
   {
     "city": "pref-13",
@@ -654,6 +655,7 @@
         "image": "images/hotels/new-tokyo-test-hotel-room1-1793087035694.jpg"
       }
     ],
-    "image": "images/hotels/new-tokyo-test-hotel-1793087028580.jpg"
+    "image": "images/hotels/new-tokyo-test-hotel-1793087028580.jpg",
+    "featured": true
   }
 ]
