@@ -38,9 +38,8 @@ export function buildAreas(base: Area[], hotels: { city: string; cityLabel: stri
   return result;
 }
 
-const DESIGNATED = ['札幌市', '仙台市', 'さいたま市', '千葉市', '横浜市', '川崎市', '相模原市', '新潟市', '静岡市', '浜松市', '名古屋市', '京都市', '大阪市', '堺市', '神戸市', '岡山市', '広島市', '北九州市', '福岡市', '熊本市'];
 
-// 住所から市区町村名を取り出す（例：木更津市→木更津、京都市→京都市、江東区→江東区）
+// 住所から市区町村名を取り出す（「市」は表示しない。例：木更津市→木更津、京都市→京都、江東区→江東区）
 export function municipality(address?: string): string {
   let a = (address ?? '').replace(/^〒?\s*\d{3}-?\d{4}\s*/, '');
   a = a.replace(/^(北海道|東京都|京都府|大阪府|[^\s都道府県]{2,3}県)/, '');
@@ -48,7 +47,7 @@ export function municipality(address?: string): string {
   const m = a.match(/^(.+?市|.+?区|.+?町|.+?村)/);
   if (!m) return '';
   const name = m[1];
-  return name.endsWith('市') && !DESIGNATED.includes(name) ? name.slice(0, -1) : name;
+  return name.endsWith('市') ? name.slice(0, -1) : name;
 }
 
 // カード左上に出すサブ情報：手入力があればそれ、なければ住所から自動、取れなければ都道府県名
