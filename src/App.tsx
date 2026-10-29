@@ -367,7 +367,7 @@ function ConsultPanel({ url }: { url?: string }) {
         <div className={tile}>
           <div className={head}><QrCode className="h-4 w-4" />扫二维码</div>
           {qrs.length > 0 ? (
-            <div className="mt-4 grid grid-cols-2 gap-4">
+            <div className="mt-4 grid grid-cols-3 gap-3">
               {qrs.map((q) => (
                 <button key={q.image} onClick={() => setZoom(q.image)} className="text-center" title="クリックで拡大">
                   <img src={q.image} alt={q.label} className="aspect-square w-full rounded-lg border border-[#173E38]/10 object-contain" />
