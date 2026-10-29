@@ -56,6 +56,7 @@ type HotelRecord = {
   phone?: string;
   url?: string;
   sub?: string;
+  featured?: boolean;
   highlights?: string[];
   rooms?: { roomType: string; size?: string; occupancy?: string; note?: string; image?: string }[];
   image: string;
@@ -749,6 +750,9 @@ function HomeOrHotelsPage({
   hotelPreviewRef: React.RefObject<HTMLElement>;
 }) {
   const isHotels = mode === 'Hotels';
+  const go = useContext(NavContext);
+  const featured = hotelData.filter((h) => h.featured).slice(0, 3);
+  const offers = featured.length > 0 ? featured : hotelData.slice(0, 3);
 
   return (
     <>
@@ -820,16 +824,24 @@ function HomeOrHotelsPage({
                     </div>
                   ) : (
                     <div className="grid gap-3">
-                      {[
-                        ['大阪限定', 'HOTEL MONTEREY LA SOEUR OSAKA', '朝食付き / 温浴设施利用可'],
-                        ['京都推荐', 'hotel MONday 京都烏丸二条', '和现代风格 / 市区动线便利'],
-                        ['东京精选', 'hotel MONday Premium TOYOSU', '家庭与团队入住推荐'],
-                      ].map(([tag, title, desc]) => (
-                        <div key={title} className="rounded-[1.6rem] border border-[#173E38]/10 bg-[#FBFAF6] p-4">
-                          <div className="text-xs uppercase tracking-[0.2em] text-[#173E38]/45">{tag}</div>
-                          <div className="mt-2 text-lg font-semibold text-[#173E38]">{title}</div>
-                          <div className="mt-2 text-sm leading-6 text-[#173E38]/62">{desc}</div>
-                        </div>
+                      {offers.map((h) => (
+                        <button
+                          key={h.en}
+                          onClick={() => go(hotelPage(h))}
+                          className="rounded-[1.6rem] border border-[#173E38]/10 bg-[#FBFAF6] p-4 text-left transition hover:bg-[#F7F3E8]"
+                        >
+                          <div className="text-xs uppercase tracking-[0.2em] text-[#173E38]/45">{h.cityLabel}</div>
+                          <div className="mt-2 text-lg font-semibold text-[#173E38]">{h.name}</div>
+                          {h.highlights && h.highlights.length > 0 ? (
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              {h.highlights.map((t) => (
+                                <span key={t} className="rounded-full bg-[#F7F3E8] px-3 py-1 text-xs text-[#173E38]">{t}</span>
+                              ))}
+                            </div>
+                          ) : (
+                            h.note && <div className="mt-2 text-sm leading-6 text-[#173E38]/62">{h.note}</div>
+                          )}
+                        </button>
                       ))}
                     </div>
                   )}

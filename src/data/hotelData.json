@@ -172,7 +172,8 @@
       "温浴施設（サウナ付き・無料）",
       "トリプルルームあり"
     ],
-    "rooms": []
+    "rooms": [],
+    "featured": true
   },
   {
     "city": "pref-28",
@@ -205,8 +206,12 @@
     "phone": "075-221-6210",
     "url": "https://hotel-monday.com/karasumanijo/",
     "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1200",
-    "highlights": [],
-    "rooms": []
+    "highlights": [
+      "和现代风格",
+      "市区动线便利"
+    ],
+    "rooms": [],
+    "featured": true
   },
   {
     "city": "pref-26",
@@ -477,8 +482,11 @@
     "phone": "03-3532-8141",
     "url": "https://hotel-monday.com/toyosu/",
     "image": "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?q=80&w=1200",
-    "highlights": [],
-    "rooms": []
+    "highlights": [
+      "家庭与团队入住推荐"
+    ],
+    "rooms": [],
+    "featured": true
   },
   {
     "city": "pref-13",

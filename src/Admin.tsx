@@ -25,6 +25,7 @@ type Hotel = {
   phone?: string;
   url?: string;
   sub?: string;
+  featured?: boolean;
   highlights?: string[];
   rooms?: Room[];
   image: string;
@@ -118,7 +119,7 @@ export default function AdminPage() {
   const [tokenInput, setTokenInput] = useState('');
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [sha, setSha] = useState('');
-  const [tab, setTab] = useState<'hotels' | 'contact'>('hotels');
+  const [tab, setTab] = useState<'hotels' | 'contact' | 'offers'>('hotels');
   const [contact, setContact] = useState<Contact | null>(null);
   const [contactSha, setContactSha] = useState('');
   const [contactDirty, setContactDirty] = useState(false);
@@ -541,12 +542,52 @@ export default function AdminPage() {
       {(dirty || contactDirty) && <div className="mt-3 text-xs text-[#C2410C]">未保存の変更があります。</div>}
 
       <div className="mt-6 flex gap-2">
-        {([['hotels', 'ホテル'], ['contact', 'コンタクト']] as const).map(([k, l]) => (
+        {([['hotels', 'ホテル'], ['offers', 'ホーム特価区'], ['contact', 'コンタクト']] as const).map(([k, l]) => (
           <button key={k} onClick={() => setTab(k)} className={`rounded-xl px-5 py-2 text-sm transition ${tab === k ? 'bg-[#173E38] text-white' : 'bg-white text-[#173E38] ring-1 ring-[#173E38]/15 hover:bg-[#F7F3E8]'}`}>
             {l}
           </button>
         ))}
       </div>
+
+      {tab === 'offers' && (
+        <div className="mt-6 max-w-3xl rounded-[1.6rem] border border-[#173E38]/10 bg-white p-6">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="text-sm font-semibold text-[#173E38]">Homeページ「Special Offers 特价区 / 优惠区」に表示するホテル</div>
+            <div className="rounded-full bg-[#F7F3E8] px-3 py-1 text-xs text-[#173E38]">選択中 {hotels.filter((h) => h.featured).length} / 3</div>
+          </div>
+          <p className="mt-2 text-xs leading-6 text-[#173E38]/65">チェックを入れたホテルが、ホテル名と特徴タグで表示されます（最大3軒。表示順は下の一覧の順です）。特徴タグは、「ホテル」タブで編集できます。</p>
+          <div className="mt-4 grid gap-2">
+            {hotels.map((h, i) => {
+              const count = hotels.filter((x) => x.featured).length;
+              const disabled = !h.featured && count >= 3;
+              return (
+                <label key={h.en + i} className={`flex items-start gap-3 rounded-xl border px-4 py-3 text-sm ${h.featured ? 'border-[#173E38] bg-[#F7F3E8]' : 'border-[#173E38]/10 bg-[#FBFAF6]'} ${disabled ? 'opacity-45' : 'cursor-pointer'}`}>
+                  <input
+                    type="checkbox"
+                    className="mt-1 h-4 w-4 accent-[#173E38]"
+                    checked={!!h.featured}
+                    disabled={disabled}
+                    onChange={() => {
+                      setHotels((l) => l.map((x, idx) => (idx === i ? { ...x, featured: !x.featured } : x)));
+                      setDirty(true);
+                    }}
+                  />
+                  <span>
+                    <span className="font-medium text-[#173E38]">{h.name}</span>
+                    <span className="ml-2 text-xs text-[#173E38]/55">{h.cityLabel}</span>
+                    {(h.highlights ?? []).filter(Boolean).length > 0 && <span className="mt-1 block text-xs text-[#173E38]/60">{(h.highlights ?? []).filter(Boolean).join(' / ')}</span>}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+          <div className="mt-6 flex justify-end">
+            <button onClick={save} disabled={saving || (!dirty && !contactDirty)} className="rounded-xl bg-[#173E38] px-6 py-2 text-sm text-white hover:bg-[#143A35] disabled:opacity-40">
+              {saving ? '保存中…' : '保存して公開'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {tab === 'contact' && contact && (
         <div className="mt-6 max-w-3xl rounded-[1.6rem] border border-[#173E38]/10 bg-white p-6">
