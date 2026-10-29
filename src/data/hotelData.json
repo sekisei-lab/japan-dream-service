@@ -517,19 +517,36 @@
   {
     "city": "Tokyo",
     "cityLabel": "東京",
-    "name": "ベッセルイン浅草",
-    "en": "Vessel Inn Asakusa",
+    "name": " ベッセルイン浅草 つくばエクスプレス",
+    "en": " Vessel Inn Asakusa Tsukuba Express",
     "stars": 4,
-    "size": "",
+    "size": "13.5平",
     "price": "お問い合わせ",
     "tax": "",
-    "note": "つくばエクスプレス",
-    "address": "〒111-0031 東京都台東区千束1丁目15番1号",
-    "phone": "03-3873-7051",
+    "note": " ベッセルイン浅草 つくばエクスプレス",
+    "address": "〒111-0031 東京都台東区千束1丁目15番１号",
+    "phone": "03-58595638",
     "url": "https://www.vessel-hotel.jp/inn/asakusa/",
-    "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1200",
-    "highlights": [],
-    "rooms": []
+    "image": "images/hotels/vessel-inn-asakusa-tsukuba-express-1793275230495.jpg",
+    "highlights": [
+      "「浅草駅」A2出口から徒歩6分"
+    ],
+    "rooms": [
+      {
+        "roomType": "TWN",
+        "size": "13.5",
+        "occupancy": "2",
+        "note": "",
+        "image": "images/hotels/vessel-inn-asakusa-tsukuba-express-room1-1793275258852.jpg"
+      },
+      {
+        "roomType": "DBL",
+        "size": "13.5",
+        "occupancy": "1-2",
+        "note": "",
+        "image": "images/hotels/vessel-inn-asakusa-tsukuba-express-room2-1793275292227.jpg"
+      }
+    ]
   },
   {
     "city": "Tokyo",
