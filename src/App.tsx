@@ -327,23 +327,37 @@ function ConsultPanel({ url }: { url?: string }) {
     <div className="mt-8 rounded-[2rem] border border-[#173E38]/10 bg-[#F7F3E8] p-6">
       <div className="text-xs uppercase tracking-[0.22em] text-[#173E38]/45">Contact</div>
       <h3 className="mt-2 text-xl font-semibold text-[#173E38]">咨询方式栏</h3>
-      <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className={tile}>
-          <div className={head}><Phone className="h-4 w-4" />电话咨询</div>
-          <div className="mt-3 break-all text-sm text-[#173E38]/75">
-            {contactJson.phone ? <a href={`tel:${contactJson.phone.replace(/[^0-9+]/g, '')}`} className="hover:underline">{contactJson.phone}</a> : '準備中'}
+      <div className="mt-5 grid gap-4 md:grid-cols-2">
+        <div className="grid content-start gap-4">
+          <div className={tile}>
+            <div className={head}><Phone className="h-4 w-4" />电话咨询</div>
+            <div className="mt-3 break-all text-sm text-[#173E38]/75">
+              {contactJson.phone ? <a href={`tel:${contactJson.phone.replace(/[^0-9+]/g, '')}`} className="hover:underline">{contactJson.phone}</a> : '準備中'}
+            </div>
           </div>
-        </div>
-        <div className={tile}>
-          <div className={head}><Mail className="h-4 w-4" />邮件咨询</div>
-          <div className="mt-3 break-all text-sm text-[#173E38]/75">
-            {contactJson.email ? <a href={`mailto:${contactJson.email}`} className="hover:underline">{contactJson.email}</a> : '準備中'}
+          <div className={tile}>
+            <div className={head}><Mail className="h-4 w-4" />邮件咨询</div>
+            <div className="mt-3 break-all text-sm text-[#173E38]/75">
+              {contactJson.email ? <a href={`mailto:${contactJson.email}`} className="hover:underline">{contactJson.email}</a> : '準備中'}
+            </div>
+          </div>
+          <div className={tile}>
+            <div className={head}><Globe className="h-4 w-4" />公式サイト</div>
+            <div className="mt-3">
+              {url ? (
+                <Button className="rounded-2xl bg-[#173E38] px-5 text-white hover:bg-[#143A35]" onClick={() => window.open(url, '_blank', 'noopener')}>
+                  開く <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
+              ) : (
+                <div className="text-sm text-[#173E38]/55">準備中</div>
+              )}
+            </div>
           </div>
         </div>
         <div className={tile}>
           <div className={head}><QrCode className="h-4 w-4" />扫二维码</div>
           {qrs.length > 0 ? (
-            <div className="mt-3 grid grid-cols-2 gap-3">
+            <div className="mt-4 grid grid-cols-2 gap-4">
               {qrs.map((q) => (
                 <button key={q.image} onClick={() => setZoom(q.image)} className="text-center" title="クリックで拡大">
                   <img src={q.image} alt={q.label} className="aspect-square w-full rounded-lg border border-[#173E38]/10 object-contain" />
@@ -354,18 +368,6 @@ function ConsultPanel({ url }: { url?: string }) {
           ) : (
             <div className="mt-3 text-sm text-[#173E38]/55">二维码准备中</div>
           )}
-        </div>
-        <div className={tile}>
-          <div className={head}><Globe className="h-4 w-4" />公式サイト</div>
-          <div className="mt-3">
-            {url ? (
-              <Button className="rounded-2xl bg-[#173E38] px-5 text-white hover:bg-[#143A35]" onClick={() => window.open(url, '_blank', 'noopener')}>
-                開く <ArrowRight className="ml-1 h-4 w-4" />
-              </Button>
-            ) : (
-              <div className="text-sm text-[#173E38]/55">準備中</div>
-            )}
-          </div>
         </div>
       </div>
       {zoom && (
