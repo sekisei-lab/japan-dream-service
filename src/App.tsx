@@ -1012,7 +1012,7 @@ export default function JapanDreamServicePrototype() {
                   className="relative mx-auto w-fit"
                 >
                   <div className="absolute inset-0 rounded-full bg-[#E7D8A8]/18 blur-3xl" />
-                  <div className="relative text-[9rem] leading-none text-[#F6EDCF] md:text-[12rem]">∞</div>
+                  <img src="images/logo/mark.png" alt="Japan Dream Service" className="relative mx-auto h-28 w-auto md:h-40" />
                 </motion.div>
                 <motion.h1
                   initial={{ opacity: 0, y: 24 }}
@@ -1031,7 +1031,7 @@ export default function JapanDreamServicePrototype() {
             <header className="sticky top-0 z-40 border-b border-[#173E38]/8 bg-[#F6F2E8]/80 backdrop-blur-xl">
               <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
                 <button className="flex items-center gap-3 text-left" onClick={() => goPage('Home')}>
-                  <div className="text-4xl leading-none text-[#C9B06B]">∞</div>
+                  <img src="images/logo/mark-header.png" alt="" className="h-9 w-auto" />
                   <div>
                     <div className="text-base font-semibold" style={{ fontFamily: 'Georgia, serif' }}>Japan Dream Service</div>
                     <div className="text-[11px] uppercase tracking-[0.22em] text-[#173E38]/48">Travel Preview</div>
