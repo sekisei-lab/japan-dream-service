@@ -6,7 +6,11 @@ import {
   CalendarDays,
   ChevronDown,
   ChevronRight,
+  Globe,
+  Mail,
   MapPin,
+  Phone,
+  QrCode,
   Search,
   Sparkles,
   Star,
@@ -314,6 +318,65 @@ function HotelDetailPage({ hotel }: { hotel: HotelRecord }) {
   );
 }
 
+function ConsultPanel({ url }: { url?: string }) {
+  const qrs = ((contactJson as { qrs?: ContactQr[] }).qrs ?? []).filter((q) => q.image);
+  const [zoom, setZoom] = useState('');
+  const tile = 'rounded-2xl border border-[#173E38]/10 bg-white p-5';
+  const head = 'flex items-center gap-2 text-sm font-semibold text-[#173E38]';
+  return (
+    <div className="mt-8 rounded-[2rem] border border-[#173E38]/10 bg-[#F7F3E8] p-6">
+      <div className="text-xs uppercase tracking-[0.22em] text-[#173E38]/45">Contact</div>
+      <h3 className="mt-2 text-xl font-semibold text-[#173E38]">咨询方式栏</h3>
+      <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className={tile}>
+          <div className={head}><Phone className="h-4 w-4" />电话咨询</div>
+          <div className="mt-3 break-all text-sm text-[#173E38]/75">
+            {contactJson.phone ? <a href={`tel:${contactJson.phone.replace(/[^0-9+]/g, '')}`} className="hover:underline">{contactJson.phone}</a> : '準備中'}
+          </div>
+        </div>
+        <div className={tile}>
+          <div className={head}><Mail className="h-4 w-4" />邮件咨询</div>
+          <div className="mt-3 break-all text-sm text-[#173E38]/75">
+            {contactJson.email ? <a href={`mailto:${contactJson.email}`} className="hover:underline">{contactJson.email}</a> : '準備中'}
+          </div>
+        </div>
+        <div className={tile}>
+          <div className={head}><QrCode className="h-4 w-4" />扫二维码</div>
+          {qrs.length > 0 ? (
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              {qrs.map((q) => (
+                <button key={q.image} onClick={() => setZoom(q.image)} className="text-center" title="クリックで拡大">
+                  <img src={q.image} alt={q.label} className="aspect-square w-full rounded-lg border border-[#173E38]/10 object-contain" />
+                  {q.label && <div className="mt-1 text-xs text-[#173E38]/70">{q.label}</div>}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-3 text-sm text-[#173E38]/55">二维码准备中</div>
+          )}
+        </div>
+        <div className={tile}>
+          <div className={head}><Globe className="h-4 w-4" />公式サイト</div>
+          <div className="mt-3">
+            {url ? (
+              <Button className="rounded-2xl bg-[#173E38] px-5 text-white hover:bg-[#143A35]" onClick={() => window.open(url, '_blank', 'noopener')}>
+                開く <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+            ) : (
+              <div className="text-sm text-[#173E38]/55">準備中</div>
+            )}
+          </div>
+        </div>
+      </div>
+      {zoom && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6" onClick={() => setZoom('')}>
+          <img src={zoom} alt="" className="max-h-[80vh] max-w-full rounded-2xl bg-white p-3" />
+        </div>
+      )}
+    </div>
+  );
+}
+
 function RoomPreviewPage({ hotel }: { hotel: HotelRecord }) {
   const go = useContext(NavContext);
   const rooms = hotel.rooms && hotel.rooms.length > 0 ? hotel.rooms : [{ roomType: '標準客室', size: hotel.size, occupancy: '', note: hotel.note }];
@@ -426,30 +489,10 @@ function RoomPreviewPage({ hotel }: { hotel: HotelRecord }) {
                   </ul>
                 </div>
               )}
-              <div className="mt-4 rounded-[1.6rem] border border-[#173E38]/10 bg-[#F7F3E8] p-5">
-                <div className="text-sm font-semibold text-[#173E38]">咨询方式栏</div>
-                <div className="mt-4 grid gap-3">
-                  {hotel.phone && (
-                    <div className="flex items-center justify-between rounded-2xl border border-[#173E38]/10 bg-white px-4 py-4">
-                      <div className="text-sm font-medium text-[#173E38]">电话咨询</div>
-                      <div className="text-sm text-[#173E38]/68">{hotel.phone}</div>
-                    </div>
-                  )}
-                  <div className="flex items-center justify-between rounded-2xl border border-[#173E38]/10 bg-white px-4 py-4">
-                    <div className="text-sm font-medium text-[#173E38]">邮件咨询</div>
-                    <div className="text-sm text-[#173E38]/68">{contactJson.email}</div>
-                  </div>
-                  {hotel.url && (
-                    <button onClick={() => window.open(hotel.url, '_blank', 'noopener')} className="flex items-center justify-between rounded-2xl border border-[#173E38]/10 bg-white px-4 py-4 text-left hover:bg-[#F7F3E8]">
-                      <div className="text-sm font-medium text-[#173E38]">公式サイト</div>
-                      <ArrowRight className="h-4 w-4 text-[#173E38]/68" />
-                    </button>
-                  )}
-                </div>
-              </div>
             </CardContent>
           </Card>
         </div>
+        <ConsultPanel url={hotel.url} />
       </div>
     </div>
   );
@@ -667,24 +710,10 @@ function MontereyBookingPage() {
                   ))}
                 </div>
               </div>
-              <div className="mt-4 rounded-[1.6rem] border border-[#173E38]/10 bg-[#F7F3E8] p-5">
-                <div className="text-sm font-semibold text-[#173E38]">咨询方式栏</div>
-                <div className="mt-4 grid gap-3">
-                  {[
-                    ['电话咨询', contactJson.phone],
-                    ['邮件咨询', contactJson.email],
-                    ['微信 / LINE', contactJson.chat],
-                  ].map(([label, value]) => (
-                    <div key={label} className="flex items-center justify-between rounded-2xl border border-[#173E38]/10 bg-white px-4 py-4">
-                      <div className="text-sm font-medium text-[#173E38]">{label}</div>
-                      <div className="text-sm text-[#173E38]/68">{value}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </CardContent>
           </Card>
         </div>
+        <ConsultPanel url={hotelData.find((h) => h.en === 'HOTEL MONTEREY LA SOEUR OSAKA')?.url} />
       </div>
     </div>
   );
