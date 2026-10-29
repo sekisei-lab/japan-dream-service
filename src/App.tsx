@@ -92,7 +92,7 @@ const colors = {
   cream: '#F6F2E8',
 };
 
-const hotelData = hotelDataJson as HotelRecord[];
+const hotelDataRaw = hotelDataJson as HotelRecord[];
 
 const montereyRooms = montereyRoomsJson as RoomPlan[];
 
@@ -102,7 +102,14 @@ const accents = [
   'linear-gradient(135deg, #2B6E69 0%, #194A47 100%)',
 ];
 
-const areas = buildAreas(areasJson as Area[], hotelData);
+const areas = buildAreas(areasJson as Area[], hotelDataRaw);
+
+// ホテルは、エリア（北から南、東から西の順）ごとに並べる。同じエリア内は、データの並び順のまま。
+const areaOrder = (h: HotelRecord) => {
+  const i = areas.findIndex((a) => a.key === h.city);
+  return i < 0 ? areas.length : i;
+};
+const hotelData: HotelRecord[] = hotelDataRaw.map((h, i) => ({ h, i })).sort((a, b) => areaOrder(a.h) - areaOrder(b.h) || a.i - b.i).map(({ h }) => h);
 
 const cityMeta: Record<string, { label: string; desc: string; accent: string }> = {
   All: {
