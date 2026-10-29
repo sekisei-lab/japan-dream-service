@@ -592,7 +592,7 @@ function ContactPage() {
                 </div>
               ))}
             {qrs.length > 0 && (
-              <div className="mt-2 grid grid-cols-2 gap-4">
+              <div className="mt-2 grid grid-cols-3 gap-3">
                 {qrs.map((q) => (
                   <div key={q.image} className="rounded-2xl border border-white/15 bg-white p-3 text-center text-[#173E38]">
                     <img src={q.image} alt={q.label} className="mx-auto aspect-square w-full max-w-[200px] object-contain" />

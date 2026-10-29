@@ -627,7 +627,7 @@ export default function AdminPage() {
                 onQrFile(qrTarget.current, e.target.files?.[0]);
                 e.target.value = '';
               }} />
-              <div className="mt-2 grid gap-3 md:grid-cols-2">
+              <div className="mt-2 grid gap-3 md:grid-cols-3">
                 {qrs.map((q, i) => (
                   <div key={i} className="rounded-xl border border-[#173E38]/10 bg-[#FBFAF6] p-3">
                     <div
