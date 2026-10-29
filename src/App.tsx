@@ -769,24 +769,24 @@ function HomeOrHotelsPage({
         <div className="absolute -left-12 top-20 h-48 w-48 rounded-full bg-[#E7D8A8]/10 blur-3xl" />
         <div className="absolute right-0 top-12 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
 
-        <div className="relative mx-auto grid max-w-7xl gap-12 px-6 py-16 md:grid-cols-[1.05fr_0.95fr] md:px-10 md:py-24">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-6 py-10 md:grid-cols-[1.05fr_0.95fr] md:px-10 md:py-12">
           <div className="text-white">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.85 }} className="inline-flex items-center gap-2 rounded-full border border-white/14 bg-white/10 px-4 py-2 text-xs tracking-[0.18em] text-white/82">
               <Sparkles className="h-4 w-4" />
               JAPAN DREAM SERVICE
             </motion.div>
-            <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.95 }} className="mt-7 text-4xl font-semibold leading-tight md:text-6xl">
+            <motion.h2 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.95 }} className="mt-5 text-3xl font-semibold leading-tight md:text-5xl">
               {isHotels ? 'Hotels 预览入口' : '日本旅游服务信息'}
               <br />
               {isHotels ? '向下查看酒店列表' : '一目でわかる展示入口'}
             </motion.h2>
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45, duration: 1 }} className="mt-6 max-w-xl text-base leading-8 text-white/82">
+            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45, duration: 1 }} className="mt-4 max-w-xl text-sm leading-7 text-white/82 md:text-base">
               {isHotels
                 ? 'Hotels 页面不再显示额外按钮，中间下方放置呼吸式向下箭头。点击后会平滑滑入到下方的酒店预览区。'
                 : '首页右侧作为特价优惠区，左侧主按钮调整为【去Hotels】【去Service】。'}
             </motion.p>
             {!isHotels && (
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65, duration: 0.9 }} className="mt-8 flex flex-wrap gap-4">
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65, duration: 0.9 }} className="mt-6 flex flex-wrap gap-4">
                 <Button className="rounded-2xl px-6 text-[#173E38]" style={{ backgroundColor: colors.cream }} onClick={onGoHotels}>
                   去Hotels
                 </Button>
@@ -800,12 +800,12 @@ function HomeOrHotelsPage({
           <motion.div initial={{ opacity: 0, scale: 0.96, y: 18 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ delay: 0.35, duration: 1 }}>
             <Card className="overflow-hidden rounded-[2.2rem] border-white/12 bg-white/96 shadow-2xl">
               <CardContent className="p-0">
-                <div className="border-b border-[#173E38]/8 bg-[#F7F3E8] p-5">
+                <div className="border-b border-[#173E38]/8 bg-[#F7F3E8] p-4">
                   <div className="text-xs uppercase tracking-[0.22em] text-[#173E38]/45">{isHotels ? 'Hotels Overview' : 'Special Offers'}</div>
-                  <div className="mt-2 text-2xl font-semibold text-[#173E38]">{isHotels ? `${heroText.label} 资源预览` : '特价区 / 优惠区'}</div>
-                  <div className="mt-2 text-sm leading-7 text-[#173E38]/62">{isHotels ? heroText.desc : '适合作为首页右侧重点推荐区，展示限时优惠、团体住宿特价与热门推荐。'}</div>
+                  <div className="mt-1 text-xl font-semibold text-[#173E38]">{isHotels ? `${heroText.label} 资源预览` : '特价区 / 优惠区'}</div>
+                  <div className="mt-1 text-xs leading-6 text-[#173E38]/62">{isHotels ? heroText.desc : '适合作为首页右侧重点推荐区，展示限时优惠、团体住宿特价与热门推荐。'}</div>
                 </div>
-                <div className="p-5">
+                <div className="p-4">
                   {isHotels ? (
                     <div className="rounded-[1.8rem] p-4 text-white" style={{ background: heroText.accent }}>
                       <div className="flex items-center justify-between">
@@ -835,10 +835,10 @@ function HomeOrHotelsPage({
                         <button
                           key={h.en}
                           onClick={() => go(hotelPage(h))}
-                          className="rounded-[1.6rem] border border-[#173E38]/10 bg-[#FBFAF6] p-4 text-left transition hover:bg-[#F7F3E8]"
+                          className="rounded-[1.4rem] border border-[#173E38]/10 bg-[#FBFAF6] px-4 py-3 text-left transition hover:bg-[#F7F3E8]"
                         >
                           <div className="text-xs uppercase tracking-[0.2em] text-[#173E38]/45">{h.cityLabel}</div>
-                          <div className="mt-2 text-lg font-semibold text-[#173E38]">{h.name}</div>
+                          <div className="mt-1 text-base font-semibold leading-6 text-[#173E38]">{h.name}</div>
                           {h.highlights && h.highlights.length > 0 ? (
                             <div className="mt-2 flex flex-wrap gap-2">
                               {h.highlights.map((t) => (
