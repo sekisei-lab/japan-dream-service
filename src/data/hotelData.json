@@ -534,15 +534,15 @@
     "rooms": [
       {
         "roomType": "TWN",
-        "size": "13.5",
-        "occupancy": "2",
+        "size": "13.5㎡",
+        "occupancy": "2名",
         "note": "",
         "image": "images/hotels/vessel-inn-asakusa-tsukuba-express-room1-1793275258852.jpg"
       },
       {
         "roomType": "DBL",
-        "size": "13.5",
-        "occupancy": "1-2",
+        "size": "13.5㎡",
+        "occupancy": "1-2名",
         "note": "",
         "image": "images/hotels/vessel-inn-asakusa-tsukuba-express-room2-1793275292227.jpg"
       }
