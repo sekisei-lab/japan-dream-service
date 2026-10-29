@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import QRCode from 'qrcode';
 import jsQR from 'jsqr';
 import areasJson from '@/data/areas.json';
+import { PREF_GROUPS, prefKey, prefectures } from './prefectures';
 
 const REPO = 'sekisei-lab/japan-dream-service';
 const BRANCH = 'main';
@@ -663,16 +664,32 @@ export default function AdminPage() {
               <Field label="英語名（ページのID。重複不可）">
                 <input className={inputCls} value={hotel.en} onChange={(e) => update({ en: e.target.value })} />
               </Field>
-              <Field label="エリア">
+              <Field label="エリア（既存エリア／都道府県）">
                 <select
                   className={inputCls}
                   value={hotel.city}
-                  onChange={(e) => update({ city: e.target.value, cityLabel: areas.find((a) => a.key === e.target.value)?.label ?? '' })}
+                  onChange={(e) =>
+                    update({
+                      city: e.target.value,
+                      cityLabel: [...areas, ...prefectures].find((a) => a.key === e.target.value)?.label ?? hotel.cityLabel,
+                    })
+                  }
                 >
-                  {areas.map((a) => (
-                    <option key={a.key} value={a.key}>{a.label}</option>
+                  {![...areas, ...prefectures].some((a) => a.key === hotel.city) && <option value={hotel.city}>{hotel.cityLabel || hotel.city}</option>}
+                  <optgroup label="既存エリア">
+                    {areas.map((a) => (
+                      <option key={a.key} value={a.key}>{a.label}</option>
+                    ))}
+                  </optgroup>
+                  {PREF_GROUPS.map((g) => (
+                    <optgroup key={g.region} label={`都道府県：${g.region}`}>
+                      {g.items.map(([code, label]) => (
+                        <option key={code} value={prefKey(code)}>{label}</option>
+                      ))}
+                    </optgroup>
                   ))}
                 </select>
+                <span className="mt-1 block text-[11px] leading-5 text-[#173E38]/55">都道府県を選ぶと、サイトのエリア切替・Hotels一覧・メニューに自動で追加されます。</span>
               </Field>
               <Field label="星の数（0〜5）">
                 <input type="number" min={0} max={5} className={inputCls} value={hotel.stars} onChange={(e) => update({ stars: Math.max(0, Math.min(5, Number(e.target.value) || 0)) })} />

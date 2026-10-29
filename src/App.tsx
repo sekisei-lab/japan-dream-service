@@ -22,6 +22,7 @@ import { Input } from '@/components/ui/input';
 import hotelDataJson from '@/data/hotelData.json';
 import montereyRoomsJson from '@/data/montereyRooms.json';
 import areasJson from '@/data/areas.json';
+import { buildAreas, type Area } from './prefectures';
 import montereyInfoJson from '@/data/montereyInfo.json';
 import AdminPage from './Admin';
 import contactJson from '@/data/contact.json';
@@ -99,7 +100,7 @@ const accents = [
   'linear-gradient(135deg, #2B6E69 0%, #194A47 100%)',
 ];
 
-const areas = areasJson as { key: string; label: string; desc: string }[];
+const areas = buildAreas(areasJson as Area[], hotelData);
 
 const cityMeta: Record<string, { label: string; desc: string; accent: string }> = {
   All: {
