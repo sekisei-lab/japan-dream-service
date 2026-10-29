@@ -1,7 +1,7 @@
 [
   {
-    "city": "Osaka",
-    "cityLabel": "大阪市内",
+    "city": "pref-27",
+    "cityLabel": "大阪府",
     "name": "くれたけイン南海堺駅前",
     "en": "KURETAKE INN NANKAI SAKAI STATION",
     "stars": 3,
@@ -17,8 +17,8 @@
     "rooms": []
   },
   {
-    "city": "Osaka",
-    "cityLabel": "大阪市内",
+    "city": "pref-27",
+    "cityLabel": "大阪府",
     "name": "ノク大阪",
     "en": "NOKU OSAKA",
     "stars": 3,
@@ -34,8 +34,8 @@
     "rooms": []
   },
   {
-    "city": "Osaka",
-    "cityLabel": "大阪市内",
+    "city": "pref-27",
+    "cityLabel": "大阪府",
     "name": "ホテル アゴーラ 大阪守口",
     "en": "HOTEL AGORA OSAKA MORIGUCHI",
     "stars": 4,
@@ -51,8 +51,8 @@
     "rooms": []
   },
   {
-    "city": "Osaka",
-    "cityLabel": "大阪市内",
+    "city": "pref-27",
+    "cityLabel": "大阪府",
     "name": "サラサホテル新大阪",
     "en": "SARASA HOTEL 新大阪",
     "stars": 3,
@@ -68,8 +68,8 @@
     "rooms": []
   },
   {
-    "city": "Osaka",
-    "cityLabel": "大阪市内",
+    "city": "pref-27",
+    "cityLabel": "大阪府",
     "name": "SARASA HOTEL なんば",
     "en": "SARASA HOTEL NAMBA",
     "stars": 3,
@@ -85,8 +85,8 @@
     "rooms": []
   },
   {
-    "city": "Osaka",
-    "cityLabel": "大阪市内",
+    "city": "pref-27",
+    "cityLabel": "大阪府",
     "name": "SARASA HOTEL 心斎橋",
     "en": "SARASA HOTEL SHINSAIBASHI",
     "stars": 3,
@@ -102,8 +102,8 @@
     "rooms": []
   },
   {
-    "city": "Osaka",
-    "cityLabel": "大阪市内",
+    "city": "pref-27",
+    "cityLabel": "大阪府",
     "name": "嵐ホテル難波南",
     "en": "Arashi Hotel Nambaminami",
     "stars": 4,
@@ -137,8 +137,8 @@
     ]
   },
   {
-    "city": "Osaka",
-    "cityLabel": "大阪市内",
+    "city": "pref-27",
+    "cityLabel": "大阪府",
     "name": "嵐ホテル天下茶屋",
     "en": "Arashi Hotel Tengachaya",
     "stars": 4,
@@ -154,8 +154,8 @@
     "rooms": []
   },
   {
-    "city": "Osaka",
-    "cityLabel": "大阪市内",
+    "city": "pref-27",
+    "cityLabel": "大阪府",
     "name": "ホテルモントレ ラ・スール大阪",
     "en": "HOTEL MONTEREY LA SOEUR OSAKA",
     "stars": 4,
@@ -175,8 +175,8 @@
     "rooms": []
   },
   {
-    "city": "Kobe",
-    "cityLabel": "神戸",
+    "city": "pref-28",
+    "cityLabel": "兵庫県",
     "name": "神戸ホテル フルーツ・フラワー",
     "en": "Kobe Hotel Fruit Flower",
     "stars": 4,
@@ -192,8 +192,8 @@
     "rooms": []
   },
   {
-    "city": "Kyoto",
-    "cityLabel": "京都",
+    "city": "pref-26",
+    "cityLabel": "京都府",
     "name": "hotel MONday 京都烏丸二条",
     "en": "hotel MONday Kyoto Karasuma Nijo",
     "stars": 3,
@@ -209,8 +209,8 @@
     "rooms": []
   },
   {
-    "city": "Kyoto",
-    "cityLabel": "京都",
+    "city": "pref-26",
+    "cityLabel": "京都府",
     "name": "hotel MONday 丸太町",
     "en": "hotel MONday Kyoto Marutamachi",
     "stars": 3,
@@ -226,8 +226,8 @@
     "rooms": []
   },
   {
-    "city": "Kyoto",
-    "cityLabel": "京都",
+    "city": "pref-26",
+    "cityLabel": "京都府",
     "name": "京乃宿 清水五条 呉竹荘",
     "en": "Kyoto Inn Kiyomizu Gojo Kuretakeso",
     "stars": 3,
@@ -256,8 +256,8 @@
     "highlights": []
   },
   {
-    "city": "Kansai",
-    "cityLabel": "関空",
+    "city": "pref-27",
+    "cityLabel": "大阪府",
     "name": "大阪ベイプラザホテル",
     "en": "OSAKA BAY PLAZA HOTEL",
     "stars": 3,
@@ -273,8 +273,8 @@
     "rooms": []
   },
   {
-    "city": "Kansai",
-    "cityLabel": "関空",
+    "city": "pref-27",
+    "cityLabel": "大阪府",
     "name": "レフ関空泉佐野 by ベッセルホテルズ",
     "en": "Ref Kansai Airport Izumisano",
     "stars": 3,
@@ -290,8 +290,8 @@
     "rooms": []
   },
   {
-    "city": "Chubu",
-    "cityLabel": "中部",
+    "city": "pref-23",
+    "cityLabel": "愛知県",
     "name": "スプリングサニーホテル 名古屋常滑駅前",
     "en": "Spring Sunny Hotel Nagoya Tokoname Ekimae",
     "stars": 3,
@@ -307,8 +307,8 @@
     "rooms": []
   },
   {
-    "city": "Fuji",
-    "cityLabel": "富士山",
+    "city": "pref-22",
+    "cityLabel": "静岡県",
     "name": "VOYSTAY FUJI HOTEL",
     "en": "VOYSTAY FUJI HOTEL",
     "stars": 4,
@@ -343,8 +343,8 @@
     "highlights": []
   },
   {
-    "city": "Fuji",
-    "cityLabel": "富士山",
+    "city": "pref-19",
+    "cityLabel": "山梨県",
     "name": "TEST 富士の森ホテル",
     "en": "Fuji no Mori Hotel",
     "stars": 4,
@@ -379,8 +379,8 @@
     "highlights": []
   },
   {
-    "city": "Fuji",
-    "cityLabel": "富士山",
+    "city": "pref-19",
+    "cityLabel": "山梨県",
     "name": "富士山ガーデンホテル本館",
     "en": "Fuji Garden Hotel",
     "stars": 4,
@@ -396,8 +396,8 @@
     "rooms": []
   },
   {
-    "city": "Yokohama",
-    "cityLabel": "横浜",
+    "city": "pref-14",
+    "cityLabel": "神奈川県",
     "name": "横浜テクノタワーホテル",
     "en": "Yokohama Techno Tower Hotel",
     "stars": 3,
@@ -413,8 +413,8 @@
     "rooms": []
   },
   {
-    "city": "Chiba",
-    "cityLabel": "千葉",
+    "city": "pref-12",
+    "cityLabel": "千葉県",
     "name": "東京ベイプラザホテル",
     "en": "Tokyo Bay Plaza Hotel",
     "stars": 3,
@@ -430,8 +430,8 @@
     "rooms": []
   },
   {
-    "city": "Chiba",
-    "cityLabel": "千葉",
+    "city": "pref-12",
+    "cityLabel": "千葉県",
     "name": "ザ キューブホテル千葉",
     "en": "THE QUBE HOTEL CHIBA",
     "stars": 4,
@@ -447,8 +447,8 @@
     "rooms": []
   },
   {
-    "city": "Tokyo",
-    "cityLabel": "東京",
+    "city": "pref-13",
+    "cityLabel": "東京都",
     "name": "ホテルルートインGrand東京東陽町",
     "en": "Hotel Route-Inn Grand Tokyo Toyocho",
     "stars": 3,
@@ -464,8 +464,8 @@
     "rooms": []
   },
   {
-    "city": "Tokyo",
-    "cityLabel": "東京",
+    "city": "pref-13",
+    "cityLabel": "東京都",
     "name": "hotel MONday Premium TOYOSU",
     "en": "hotel MONday Premium TOYOSU",
     "stars": 4,
@@ -481,8 +481,8 @@
     "rooms": []
   },
   {
-    "city": "Tokyo",
-    "cityLabel": "東京",
+    "city": "pref-13",
+    "cityLabel": "東京都",
     "name": "hotel MONday Tokyo Nishikasai",
     "en": "hotel MONday Tokyo Nishikasai",
     "stars": 3,
@@ -498,8 +498,8 @@
     "rooms": []
   },
   {
-    "city": "Tokyo",
-    "cityLabel": "東京",
+    "city": "pref-13",
+    "cityLabel": "東京都",
     "name": "ホテルオリエンタルエクスプレス東京蒲田",
     "en": "Hotel Oriental Express Tokyo Kamata",
     "stars": 3,
@@ -515,8 +515,8 @@
     "rooms": []
   },
   {
-    "city": "Tokyo",
-    "cityLabel": "東京",
+    "city": "pref-13",
+    "cityLabel": "東京都",
     "name": " ベッセルイン浅草 つくばエクスプレス",
     "en": " Vessel Inn Asakusa Tsukuba Express",
     "stars": 4,
@@ -549,8 +549,8 @@
     ]
   },
   {
-    "city": "Tokyo",
-    "cityLabel": "東京",
+    "city": "pref-13",
+    "cityLabel": "東京都",
     "name": "デイナイスホテル東京",
     "en": "DAY NICE HOTEL TOKYO",
     "stars": 3,
@@ -585,8 +585,8 @@
     "highlights": []
   },
   {
-    "city": "Narita",
-    "cityLabel": "成田",
+    "city": "pref-12",
+    "cityLabel": "千葉県",
     "name": "インターナショナルリゾートホテル 湯楽城",
     "en": "International Resort Hotel Yurakujo",
     "stars": 4,
@@ -602,8 +602,8 @@
     "rooms": []
   },
   {
-    "city": "Hiroshima",
-    "cityLabel": "広島",
+    "city": "pref-34",
+    "cityLabel": "広島県",
     "name": "ベッセルホテル広島 平和大通り",
     "en": "Vessel Hotel Hiroshima Heiwa Odori",
     "stars": 4,
@@ -619,8 +619,8 @@
     "rooms": []
   },
   {
-    "city": "Tokyo",
-    "cityLabel": "東京",
+    "city": "pref-13",
+    "cityLabel": "東京都",
     "name": "東京TEST Hotel",
     "en": "New Tokyo test Hotel",
     "stars": 5,

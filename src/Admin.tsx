@@ -222,8 +222,8 @@ export default function AdminPage() {
 
   const addHotel = () => {
     const h: Hotel = {
-      city: areas[0].key,
-      cityLabel: areas[0].label,
+      city: prefKey(13),
+      cityLabel: '東京都',
       name: '新しいホテル',
       en: `New Hotel ${hotels.length + 1}`,
       stars: 3,
@@ -664,7 +664,7 @@ export default function AdminPage() {
               <Field label="英語名（ページのID。重複不可）">
                 <input className={inputCls} value={hotel.en} onChange={(e) => update({ en: e.target.value })} />
               </Field>
-              <Field label="エリア（既存エリア／都道府県）">
+              <Field label="エリア（都道府県）">
                 <select
                   className={inputCls}
                   value={hotel.city}
@@ -676,11 +676,13 @@ export default function AdminPage() {
                   }
                 >
                   {![...areas, ...prefectures].some((a) => a.key === hotel.city) && <option value={hotel.city}>{hotel.cityLabel || hotel.city}</option>}
-                  <optgroup label="既存エリア">
-                    {areas.map((a) => (
-                      <option key={a.key} value={a.key}>{a.label}</option>
-                    ))}
-                  </optgroup>
+                  {areas.length > 0 && (
+                    <optgroup label="既存エリア">
+                      {areas.map((a) => (
+                        <option key={a.key} value={a.key}>{a.label}</option>
+                      ))}
+                    </optgroup>
+                  )}
                   {PREF_GROUPS.map((g) => (
                     <optgroup key={g.region} label={`都道府県：${g.region}`}>
                       {g.items.map(([code, label]) => (
